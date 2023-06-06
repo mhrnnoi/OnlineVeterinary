@@ -76,6 +76,14 @@ namespace OnlineVeterinary
             })
                 .AddEntityFrameworkStores<DataContext>();
 
+            services.AddAuthorization(o => 
+            {
+                o.AddPolicy("isDr", p => 
+                {
+                    p.RequireClaim("IsDr", "True");
+                });
+            });
+
         }
 
 

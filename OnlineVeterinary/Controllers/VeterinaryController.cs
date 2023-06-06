@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -61,34 +64,35 @@ namespace OnlineVeterinary.Controllers
         }
         
 
-        [HttpPost("adopterName/petName/DateOfBirth/PetType")]
+        [HttpPost]
+        [Authorize(Policy = "isDr") ]
         public IActionResult AddPet(string adopterName, string petName, DateTime dateOfBirth, PetEnum petType)
         {
-            if (_context.CareGivers.Count() < 1)
-            {
-                return NotFound("there is no adopter ");
+            // if (_context.CareGivers.Count() < 1)
+            // {
+            //     return NotFound("there is no adopter ");
                 
-            }
+            // }
 
-            else if (_context.CareGivers.First(a => a.FullName == adopterName) == null)
-            {
-                return NotFound("there is no adopter with that name");
-            }
+            // else if (_context.CareGivers.First(a => a.FullName == adopterName) == null)
+            // {
+            //     return NotFound("there is no adopter with that name");
+            // }
             
-            var targetAdopter = _context.CareGivers.First(a => a.FullName == adopterName);
-            var newPet = new Pet()
-            {
-                Name = petName,
-                DateOfBirth = dateOfBirth,
-                CareGiver = targetAdopter,
-                PetType = petType
+            // var targetAdopter = _context.CareGivers.First(a => a.FullName == adopterName);
+            // var newPet = new Pet()
+            // {
+            //     Name = petName,
+            //     DateOfBirth = dateOfBirth,
+            //     CareGiver = targetAdopter,
+            //     PetType = petType
 
-            };
-            _context.Pets.Add(newPet);
+            // };
+            // _context.Pets.Add(newPet);
 
-            targetAdopter.Pets.Add(newPet);
+            // targetAdopter.Pets.Add(newPet);
         
-            return CreatedAtAction("AddPet",newPet);
+            return Ok("AddPet");
         }
     }
 }
