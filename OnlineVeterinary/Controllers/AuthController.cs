@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using OnlineVeterinary.Data;
 using OnlineVeterinary.Models;
 using OnlineVeterinary.Models.DTOs;
+using OnlineVeterinary.Models.Identity;
 
 namespace OnlineVeterinary.Controllers
 {
@@ -20,99 +21,127 @@ namespace OnlineVeterinary.Controllers
     [Route("api/[controller]/[action]")]
     public class AuthController : ControllerBase
     {
-        private IConfiguration _config;
-        private UserManager<IdentityUser> _userManagar;
-        private DataContext Context { get; }
+        private readonly IConfiguration _config;
+        private readonly UserManager<IdentityUser> _userManagar;
+        private readonly DataContext _context;
+        private readonly RoleManager<IdentityRole> _rolemanager;
 
-        public AuthController(UserManager<IdentityUser> userManager, IConfiguration config, DataContext context)
+
+
+        public AuthController(UserManager<IdentityUser> userManager,
+                                RoleManager<IdentityRole> rolemanager,
+                                IConfiguration config,
+                                DataContext context)
         {
-            Context = context;
+            _rolemanager = rolemanager;
+            _context = context;
             _config = config;
             _userManagar = userManager;
         }
+
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] UserRegisterationDTO userRegister)
+        public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterationDTO userRegister)
         {
             if (!(ModelState.IsValid))
             {
-                return BadRequest(new AuthResponse()
-                {
-                    Error = new List<string> { "entered invalid" },
-                    Result = false,
-                    Token = null
-
-                });
+                return BadRequest(new AuthResponse(ResponseEnum.InvalidInput));
             }
-            var existedUser = await _userManagar.FindByEmailAsync(userRegister.Email);
-            if (existedUser != null)
+
+            var userSearchResult = await _userManagar.FindByEmailAsync(userRegister.Email);
+
+            if (userSearchResult != null)
             {
-                return BadRequest(new AuthResponse()
-                {
-                    Error = new List<string> { "email is already signed up" },
-                    Result = false,
-                    Token = null
-
-                });
+                return BadRequest(new AuthResponse(ResponseEnum.EmailAlreadySignedUp));
             }
-            var newUser = new IdentityUser()
+            var identityUser = new IdentityUser()
             {
                 Email = userRegister.Email,
                 UserName = userRegister.UserName,
-
             };
-            var creatingUser = await _userManagar.CreateAsync(newUser, userRegister.Password);
-            if (creatingUser.Succeeded)
+
+            var createUserResult = await _userManagar.CreateAsync(identityUser, userRegister.Password);
+
+            if (createUserResult.Succeeded)
             {
-                var token = GenerateToken(userRegister);
+                await _userManagar.AddToRoleAsync(identityUser, userRegister.UserRole.ToString());
 
-                if (userRegister.IsDr)
-                {
-                    Context.Doctors.Add(new Doctor() 
-                    {
-                        UserName = userRegister.UserName
-                    });
-                }
-                if (!userRegister.IsDr)
-                {
-                    Context.CareGivers.Add(new CareGiver() 
-                    {
-                        UserName = userRegister.UserName
-                    });
-                }
-                await Context.SaveChangesAsync();
+                var token = await GenerateTokenAsync(identityUser);
+                await AddingToDataBaseAsync(userRegister);
 
-                return Ok(new AuthResponse()
-                {
-                    Error = null,
-                    Result = true,
-                    Token = token
-
-                });
+                return Ok(new AuthResponse(ResponseEnum.AuthenticationSuccess, token));
 
             }
-            return BadRequest(new AuthResponse()
-            {
-                Error = new List<string> { "something went wrong" },
-                Result = false,
-                Token = null
 
-            });
+            return BadRequest(new AuthResponse(ResponseEnum.Somethingwentwrong));
 
         }
 
-        private string GenerateToken(IUserDto user)
+        private async Task AddingToDataBaseAsync(UserRegisterationDTO userRegister)
         {
+            if (userRegister.UserRole == RoleEnum.Doctor)
+            {
+                _context.Doctors.Add(new Doctor()
+                {
+                    UserName = userRegister.UserName,
+                    Email = userRegister.Email,
+
+
+                });
+            }
+            else
+            {
+                _context.CareGivers.Add(new CareGiver()
+                {
+                    Email = userRegister.Email,
+                    UserName = userRegister.UserName
+                });
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task<List<Claim>> AddClaimsAsync(IdentityUser user)
+        {
+
+            var claims = new List<Claim>(new[]
+             {
+                new Claim("id", user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            });
+
+            var userClaims = await _userManagar.GetClaimsAsync(user);
+
+            claims.AddRange(userClaims);
+
+            var userRoles = await _userManagar.GetRolesAsync(user);
+
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
+                var targetRole = await _rolemanager.FindByNameAsync(role);
+                var targetRoleClaims = await _rolemanager.GetClaimsAsync(targetRole);
+                foreach (var claim in targetRoleClaims)
+                {
+                    claims.Add(claim);
+                }
+            }
+
+            return claims;
+
+
+
+        }
+
+        private async Task<string> GenerateTokenAsync(IdentityUser user)
+        {
+
             var key = Encoding.UTF8.GetBytes(_config["JwtConfig:Secret"]);
+            var claims = await AddClaimsAsync(user);
 
             var descriptor = new SecurityTokenDescriptor()
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(JwtRegisteredClaimNames.GivenName, user.Email),
-                    new Claim("IsDr", user.IsDr.ToString())
-
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddMinutes(5),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512)
 
@@ -124,52 +153,27 @@ namespace OnlineVeterinary.Controllers
         }
 
         [HttpPost]
-
-        public async Task<IActionResult> Login([FromBody] UserLoginDTO userLogin)
+        public async Task<IActionResult> LoginAsync([FromBody] UserLoginDTO userLogin)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new AuthResponse()
-                {
-                    Error = new List<string> { "entered invalid input" },
-                    Result = false,
-                    Token = null
-
-                });
+                return BadRequest(new AuthResponse(ResponseEnum.InvalidInput));
             }
-            var existedUser = await _userManagar.FindByEmailAsync(userLogin.Email);
-            if (existedUser == null)
+            var userSearchResult = await _userManagar.FindByEmailAsync(userLogin.Email);
+            if (userSearchResult == null)
             {
-                return BadRequest(new AuthResponse()
-                {
-                    Error = new List<string> { "email is not signed up" },
-                    Result = false,
-                    Token = null
-
-                });
+                return BadRequest(new AuthResponse(ResponseEnum.NoUserWithThisEmail));
             }
 
 
-            var isCorrectPass = await _userManagar.CheckPasswordAsync(existedUser, userLogin.Password);
-            if (isCorrectPass)
+            var checkPassResult = await _userManagar.CheckPasswordAsync(userSearchResult, userLogin.Password);
+            if (checkPassResult)
             {
-                var token = GenerateToken(userLogin);
-                return Ok(new AuthResponse()
-                {
-                    Error = null,
-                    Result = true,
-                    Token = token
-
-                });
+                var token = await GenerateTokenAsync(userSearchResult);
+                return Ok(new AuthResponse(ResponseEnum.AuthenticationSuccess, token));
 
             }
-            return BadRequest(new AuthResponse()
-            {
-                Error = new List<string> { "incorrect password" },
-                Result = false,
-                Token = null
-
-            });
+            return BadRequest(new AuthResponse(ResponseEnum.IncorrectPassword));
 
         }
 

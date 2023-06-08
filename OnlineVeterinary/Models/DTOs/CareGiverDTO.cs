@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 
 namespace OnlineVeterinary.Models.DTOs
 {
-    public interface IUserDto
+    public class CareGiverDTO
     {
         public string Email { get; set; }
         public string Password { get; set; }
-        public bool IsDr { get; set; }
-
-
     }
 }

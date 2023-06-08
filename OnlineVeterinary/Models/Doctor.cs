@@ -12,6 +12,8 @@ namespace OnlineVeterinary.Models
         public int Id { get; set; }
         public string FullName { get; set; }
         public string UserName { get; set; }
+        public string Email { get; set; }
+
         public List<Visitor> Visitors { get; set; } = new List<Visitor>();
         public List<DateTime> ReservedTimes { get; set; } = new List<DateTime>();
         public double SuccesfulVisits { get; set; } = 0;

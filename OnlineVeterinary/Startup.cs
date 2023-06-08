@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -66,21 +68,26 @@ namespace OnlineVeterinary
 
                         };
                     });
-            services.AddDefaultIdentity<IdentityUser>(o =>
+            services.AddIdentity<IdentityUser, IdentityRole>(o =>
             {
                 o.Password.RequireDigit = true;
                 o.Password.RequiredLength = 8;
                 o.Password.RequireNonAlphanumeric = false;
                 o.SignIn.RequireConfirmedEmail = false;
 
+
             })
                 .AddEntityFrameworkStores<DataContext>();
 
-            services.AddAuthorization(o => 
+            services.AddAuthorization(o =>
             {
-                o.AddPolicy("isDr", p => 
+                o.AddPolicy("DrRole", p =>
                 {
-                    p.RequireClaim("IsDr", "True");
+                    p.RequireClaim(ClaimTypes.Role, "Doctor");
+                });
+                o.AddPolicy("CGRole", p =>
+                {
+                    p.RequireClaim(ClaimTypes.Role, "CareGiver");
                 });
             });
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OnlineVeterinary.Models.DTOs
 {
-    public class UserRegisterationDTO : IUserDto
+    public class UserRegisterationDTO
     {
         [Required]
         public string UserName { get; set; }
@@ -15,6 +15,6 @@ namespace OnlineVeterinary.Models.DTOs
         [Required]
         public string Password { get; set; }
         [Required]
-        public bool IsDr { get; set; }
+        public RoleEnum UserRole { get; set; }
     }
 }

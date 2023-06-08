@@ -13,8 +13,9 @@ namespace OnlineVeterinary.Models
         public int Id { get; set; }
         public string FullName { get; set; }
         public string UserName { get; set; }
+        public string Email { get; set; }
+
         public List<Doctor> Doctors { get; set; } = new List<Doctor>();
-        public List<Pet> Pets { get; set; } = new List<Pet>();
         public List<DateTime> ReservedTimes = new List<DateTime>();
 
 

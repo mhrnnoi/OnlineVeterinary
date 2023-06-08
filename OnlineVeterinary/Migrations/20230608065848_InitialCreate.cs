@@ -49,17 +49,63 @@ namespace OnlineVeterinary.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CareGiverPet",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PetId = table.Column<int>(nullable: false),
+                    CareGiverId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CareGiverPet", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CareGivers",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FullName = table.Column<string>(nullable: true),
-                    UserName = table.Column<string>(nullable: true)
+                    UserName = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CareGivers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PetDoctor",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PetId = table.Column<int>(nullable: false),
+                    Doctor = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PetDoctor", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReservedTimes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DrId = table.Column<int>(nullable: false),
+                    PetId = table.Column<int>(nullable: false),
+                    CgId = table.Column<int>(nullable: false),
+                    ReservedTimeId = table.Column<int>(nullable: false),
+                    ReservedTime = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReservedTimes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -108,8 +154,8 @@ namespace OnlineVeterinary.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(nullable: false),
+                    ProviderKey = table.Column<string>(nullable: false),
                     ProviderDisplayName = table.Column<string>(nullable: true),
                     UserId = table.Column<string>(nullable: false)
                 },
@@ -153,8 +199,8 @@ namespace OnlineVeterinary.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(nullable: false),
-                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
-                    Name = table.Column<string>(maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
                     Value = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -176,6 +222,7 @@ namespace OnlineVeterinary.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FullName = table.Column<string>(nullable: true),
                     UserName = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
                     ReservedTimes = table.Column<List<DateTime>>(nullable: true),
                     SuccesfulVisits = table.Column<double>(nullable: false),
                     Likes = table.Column<double>(nullable: false),
@@ -185,8 +232,7 @@ namespace OnlineVeterinary.Migrations
                     IsAvailable = table.Column<bool>(nullable: false),
                     Location = table.Column<int>(nullable: false),
                     Bio = table.Column<string>(nullable: true),
-                    CareGiverId = table.Column<int>(nullable: true),
-                    PetId = table.Column<int>(nullable: true)
+                    CareGiverId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -207,25 +253,18 @@ namespace OnlineVeterinary.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(nullable: true),
                     DateOfBirth = table.Column<DateTime>(nullable: false),
-                    IsSick = table.Column<bool>(nullable: false),
                     Sickness = table.Column<string>(nullable: true),
-                    CareGiverId = table.Column<int>(nullable: true),
                     PetType = table.Column<int>(nullable: false),
                     TimesOfCured = table.Column<int>(nullable: false),
-                    FavoriteDoctorId = table.Column<int>(nullable: true)
+                    MyProperty = table.Column<string>(nullable: true),
+                    FavoriteDoctorIdId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Pets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Pets_CareGivers_CareGiverId",
-                        column: x => x.CareGiverId,
-                        principalTable: "CareGivers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Pets_Doctors_FavoriteDoctorId",
-                        column: x => x.FavoriteDoctorId,
+                        name: "FK_Pets_Doctors_FavoriteDoctorIdId",
+                        column: x => x.FavoriteDoctorIdId,
                         principalTable: "Doctors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -311,19 +350,9 @@ namespace OnlineVeterinary.Migrations
                 column: "CareGiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Doctors_PetId",
-                table: "Doctors",
-                column: "PetId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Pets_CareGiverId",
+                name: "IX_Pets_FavoriteDoctorIdId",
                 table: "Pets",
-                column: "CareGiverId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Pets_FavoriteDoctorId",
-                table: "Pets",
-                column: "FavoriteDoctorId");
+                column: "FavoriteDoctorIdId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Visitors_CareGiverId",
@@ -339,30 +368,10 @@ namespace OnlineVeterinary.Migrations
                 name: "IX_Visitors_PetId",
                 table: "Visitors",
                 column: "PetId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Doctors_Pets_PetId",
-                table: "Doctors",
-                column: "PetId",
-                principalTable: "Pets",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Doctors_CareGivers_CareGiverId",
-                table: "Doctors");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Pets_CareGivers_CareGiverId",
-                table: "Pets");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Doctors_Pets_PetId",
-                table: "Doctors");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -379,6 +388,15 @@ namespace OnlineVeterinary.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CareGiverPet");
+
+            migrationBuilder.DropTable(
+                name: "PetDoctor");
+
+            migrationBuilder.DropTable(
+                name: "ReservedTimes");
+
+            migrationBuilder.DropTable(
                 name: "Visitors");
 
             migrationBuilder.DropTable(
@@ -388,13 +406,13 @@ namespace OnlineVeterinary.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "CareGivers");
-
-            migrationBuilder.DropTable(
                 name: "Pets");
 
             migrationBuilder.DropTable(
                 name: "Doctors");
+
+            migrationBuilder.DropTable(
+                name: "CareGivers");
         }
     }
 }

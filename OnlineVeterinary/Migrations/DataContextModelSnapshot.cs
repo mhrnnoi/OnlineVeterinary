@@ -161,12 +161,10 @@ namespace OnlineVeterinary.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("character varying(128)")
-                        .HasMaxLength(128);
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("character varying(128)")
-                        .HasMaxLength(128);
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
@@ -203,12 +201,10 @@ namespace OnlineVeterinary.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("character varying(128)")
-                        .HasMaxLength(128);
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("character varying(128)")
-                        .HasMaxLength(128);
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
                         .HasColumnType("text");
@@ -224,6 +220,9 @@ namespace OnlineVeterinary.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
 
                     b.Property<string>("FullName")
                         .HasColumnType("text");
@@ -255,6 +254,9 @@ namespace OnlineVeterinary.Migrations
                     b.Property<double>("Dislikes")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
                     b.Property<string>("FullName")
                         .HasColumnType("text");
 
@@ -265,9 +267,6 @@ namespace OnlineVeterinary.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<int>("Location")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("PetId")
                         .HasColumnType("integer");
 
                     b.Property<List<DateTime>>("ReservedTimes")
@@ -286,9 +285,70 @@ namespace OnlineVeterinary.Migrations
 
                     b.HasIndex("CareGiverId");
 
-                    b.HasIndex("PetId");
-
                     b.ToTable("Doctors");
+                });
+
+            modelBuilder.Entity("OnlineVeterinary.Models.Identity.CareGiverPet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CareGiverId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PetId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CareGiverPet");
+                });
+
+            modelBuilder.Entity("OnlineVeterinary.Models.Identity.PetDoctor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Doctor")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PetId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PetDoctor");
+                });
+
+            modelBuilder.Entity("OnlineVeterinary.Models.Identity.ReservedTimes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CgId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DrId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PetId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ReservedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("ReservedTimeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReservedTimes");
                 });
 
             modelBuilder.Entity("OnlineVeterinary.Models.Pet", b =>
@@ -298,17 +358,14 @@ namespace OnlineVeterinary.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("CareGiverId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int?>("FavoriteDoctorId")
+                    b.Property<int?>("FavoriteDoctorIdId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsSick")
-                        .HasColumnType("boolean");
+                    b.Property<string>("MyProperty")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -324,9 +381,7 @@ namespace OnlineVeterinary.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CareGiverId");
-
-                    b.HasIndex("FavoriteDoctorId");
+                    b.HasIndex("FavoriteDoctorIdId");
 
                     b.ToTable("Pets");
                 });
@@ -426,21 +481,13 @@ namespace OnlineVeterinary.Migrations
                     b.HasOne("OnlineVeterinary.Models.CareGiver", null)
                         .WithMany("Doctors")
                         .HasForeignKey("CareGiverId");
-
-                    b.HasOne("OnlineVeterinary.Models.Pet", null)
-                        .WithMany("Doctors")
-                        .HasForeignKey("PetId");
                 });
 
             modelBuilder.Entity("OnlineVeterinary.Models.Pet", b =>
                 {
-                    b.HasOne("OnlineVeterinary.Models.CareGiver", "CareGiver")
-                        .WithMany("Pets")
-                        .HasForeignKey("CareGiverId");
-
-                    b.HasOne("OnlineVeterinary.Models.Doctor", "FavoriteDoctor")
+                    b.HasOne("OnlineVeterinary.Models.Doctor", "FavoriteDoctorId")
                         .WithMany()
-                        .HasForeignKey("FavoriteDoctorId");
+                        .HasForeignKey("FavoriteDoctorIdId");
                 });
 
             modelBuilder.Entity("OnlineVeterinary.Models.Visitor", b =>
