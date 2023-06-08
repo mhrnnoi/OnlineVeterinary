@@ -10,6 +10,6 @@ namespace OnlineVeterinary
     {
         
 
-        public string NewsFeed { get; set; }
+        // public string NewsFeed { get; set; }
     }
 }

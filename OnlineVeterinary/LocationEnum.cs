@@ -2,8 +2,8 @@ namespace OnlineVeterinary
 {
     public enum LocationEnum
     {
-        Tehran,
-        La,
-        Ny
+        // Tehran,
+        // La,
+        // Ny
     }
 }
