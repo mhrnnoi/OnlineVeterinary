@@ -3,91 +3,79 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OnlineVeterinary.Controllers
+namespace OnlineVeterinary.Controllers.Services
 {
     public class AuthResponse
     {
-        public bool Result { get; set; }
-        public List<string> Error { get; set; }
-        public string Token { get; set; }
+         public static bool Result { get; set; }
+        public static List<string> Error { get; set; }
+        public static string Token { get; set; }
 
-        public AuthResponse(ResponseEnum response)
+        
+        public static List<string> NoRole()
         {
-            CheckResponse(response);
-        }
-        public AuthResponse(ResponseEnum response, string token)
-        {
-            SuccessAuth(token);
-        }
-
-
-        private void CheckResponse(ResponseEnum response)
-        {
-            switch (response)
-            {
-                case ResponseEnum.InvalidInput:
-                    InvalidInput();
-                    break;
-                case ResponseEnum.EmailAlreadySignedUp:
-                    EmailAlreadyExist();
-                    break;
-                case ResponseEnum.Somethingwentwrong:
-                    SomethingWentWrong();
-                    break;
-                case ResponseEnum.NoUserWithThisEmail:
-                    NoUserWithThisEmail();
-                    break;
-                case ResponseEnum.IncorrectPassword:
-                    IncorrectPassword();
-                    break;
-
-                default:
-                    throw new InvalidOperationException("What the heck ? something wrong with register or login");
-            }
-        }
-
-        private void IncorrectPassword()
-        {
-            Error = new List<string> { "userName or Password is incorrect" };
+            Error = new List<string>() {"this role is not available"};
             Result = false;
             Token = null;
+            return new List<string>(){Error.ToString() + Result.ToString() + Token};
         }
-
-        private void NoUserWithThisEmail()
-        {
-            Error = new List<string> { "No User registered With This Email " };
-            Result = false;
-            Token = null;
-        }
-
-        private void SomethingWentWrong()
-        {
-            Error = new List<string> { "something went wrong " };
-            Result = false;
-            Token = null;
-        }
-
-        private void SuccessAuth(string token)
+        public static List<string> Success(string token)
         {
             Error = null;
             Result = true;
             Token = token;
+            return new List<string>(){Error.ToString() + Result.ToString() + Token};
         }
 
-        private void InvalidInput()
+        
+
+        public static List<string> IncorrectPasswordOrEmail()
+        {
+            Error = new List<string> { "email or Password is incorrect" };
+            Result = false;
+            Token = null;
+            return new List<string>(){Error.ToString() + Result.ToString() + Token};
+
+        }
+
+        // public static List<string> NoUserWithThisEmail()
+        // {
+        //     Error = new List<string> { "No User registered With This Email " };
+        //     Result = false;
+        //     Token = null;
+        //     return new List<string>(){Error.ToString() + Result.ToString() + Token};
+
+        // }
+
+        public static List<string> SomethingWentWrong()
+        {
+            Error = new List<string> { "something went wrong " };
+            Result = false;
+            Token = null;
+            return new List<string>(){Error.ToString() + Result.ToString() + Token};
+
+        }
+
+        
+
+        public static List<string> InvalidInput()
         {
             Error = new List<string> { "entered invalid input" };
             Result = false;
             Token = null;
+            return new List<string>(){Error.ToString() + Result.ToString() + Token};
+
 
 
         }
 
-        private void EmailAlreadyExist()
+        public static List<string> EmailAlreadyExist()
         {
             Error = new List<string> { "entered email is alraedy exist you cant sign up whit it" };
             Result = false;
             Token = null;
+            return new List<string>(){Error.ToString() + Result.ToString() + Token};
+
 
 
         }

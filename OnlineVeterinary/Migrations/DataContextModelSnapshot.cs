@@ -379,6 +379,9 @@ namespace OnlineVeterinary.Migrations
                     b.Property<int>("TimesOfCured")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FavoriteDoctorIdId");

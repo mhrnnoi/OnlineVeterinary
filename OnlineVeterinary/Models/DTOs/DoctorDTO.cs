@@ -7,7 +7,11 @@ namespace OnlineVeterinary.Models.DTOs
 {
     public class DoctorDTO
     {
-        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+
+        
+
 
     }
 }

@@ -11,7 +11,7 @@ using OnlineVeterinary.Data;
 namespace OnlineVeterinary.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230608065848_InitialCreate")]
+    [Migration("20230608164457_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -380,6 +380,9 @@ namespace OnlineVeterinary.Migrations
 
                     b.Property<int>("TimesOfCured")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

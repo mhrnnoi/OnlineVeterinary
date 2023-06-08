@@ -8,6 +8,9 @@ namespace OnlineVeterinary
         Doctor = 1,
         [Description("CareGiver")]
 
-        CareGiver
+        CareGiver,
+        [Description("Admin")]
+        Admin
+
     }
 }

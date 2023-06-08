@@ -6,10 +6,12 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using OnlineVeterinary.Controllers.Services;
 using OnlineVeterinary.Data;
 using OnlineVeterinary.Models;
 using OnlineVeterinary.Models.DTOs;
@@ -24,39 +26,46 @@ namespace OnlineVeterinary.Controllers
         private readonly IConfiguration _config;
         private readonly UserManager<IdentityUser> _userManagar;
         private readonly DataContext _context;
-        private readonly RoleManager<IdentityRole> _rolemanager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
 
 
         public AuthController(UserManager<IdentityUser> userManager,
-                                RoleManager<IdentityRole> rolemanager,
+                                RoleManager<IdentityRole> roleManager,
                                 IConfiguration config,
                                 DataContext context)
         {
-            _rolemanager = rolemanager;
+            _roleManager = roleManager;
             _context = context;
             _config = config;
             _userManagar = userManager;
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterationDTO userRegister)
         {
             if (!(ModelState.IsValid))
             {
-                return BadRequest(new AuthResponse(ResponseEnum.InvalidInput));
+                return BadRequest(AuthResponse.InvalidInput());
             }
 
             var userSearchResult = await _userManagar.FindByEmailAsync(userRegister.Email);
 
             if (userSearchResult != null)
             {
-                return BadRequest(new AuthResponse(ResponseEnum.EmailAlreadySignedUp));
+                return BadRequest(AuthResponse.EmailAlreadyExist());
+            }
+
+            if (await _roleManager.FindByNameAsync(userRegister.UserRole.ToString()) == null)
+            {
+                return BadRequest(AuthResponse.NoRole());
             }
             var identityUser = new IdentityUser()
             {
                 Email = userRegister.Email,
-                UserName = userRegister.UserName,
+                UserName = userRegister.UserName
+                
             };
 
             var createUserResult = await _userManagar.CreateAsync(identityUser, userRegister.Password);
@@ -68,11 +77,11 @@ namespace OnlineVeterinary.Controllers
                 var token = await GenerateTokenAsync(identityUser);
                 await AddingToDataBaseAsync(userRegister);
 
-                return Ok(new AuthResponse(ResponseEnum.AuthenticationSuccess, token));
+                return Ok(AuthResponse.Success(token));
 
             }
 
-            return BadRequest(new AuthResponse(ResponseEnum.Somethingwentwrong));
+            return BadRequest(AuthResponse.SomethingWentWrong());
 
         }
 
@@ -83,7 +92,7 @@ namespace OnlineVeterinary.Controllers
                 _context.Doctors.Add(new Doctor()
                 {
                     UserName = userRegister.UserName,
-                    Email = userRegister.Email,
+                    Email = userRegister.Email
 
 
                 });
@@ -119,8 +128,8 @@ namespace OnlineVeterinary.Controllers
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
 
-                var targetRole = await _rolemanager.FindByNameAsync(role);
-                var targetRoleClaims = await _rolemanager.GetClaimsAsync(targetRole);
+                var targetRole = await _roleManager.FindByNameAsync(role);
+                var targetRoleClaims = await _roleManager.GetClaimsAsync(targetRole);
                 foreach (var claim in targetRoleClaims)
                 {
                     claims.Add(claim);
@@ -142,7 +151,7 @@ namespace OnlineVeterinary.Controllers
             var descriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(5),
+                Expires = DateTime.Now.AddMinutes(15),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512)
 
             };
@@ -153,16 +162,17 @@ namespace OnlineVeterinary.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> LoginAsync([FromBody] UserLoginDTO userLogin)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new AuthResponse(ResponseEnum.InvalidInput));
+                return BadRequest(AuthResponse.InvalidInput());
             }
             var userSearchResult = await _userManagar.FindByEmailAsync(userLogin.Email);
             if (userSearchResult == null)
             {
-                return BadRequest(new AuthResponse(ResponseEnum.NoUserWithThisEmail));
+                return BadRequest(AuthResponse.IncorrectPasswordOrEmail());
             }
 
 
@@ -170,10 +180,10 @@ namespace OnlineVeterinary.Controllers
             if (checkPassResult)
             {
                 var token = await GenerateTokenAsync(userSearchResult);
-                return Ok(new AuthResponse(ResponseEnum.AuthenticationSuccess, token));
+                return Ok(AuthResponse.Success(token));
 
             }
-            return BadRequest(new AuthResponse(ResponseEnum.IncorrectPassword));
+            return BadRequest(AuthResponse.SomethingWentWrong());
 
         }
 

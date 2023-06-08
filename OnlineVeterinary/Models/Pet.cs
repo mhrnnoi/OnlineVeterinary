@@ -11,6 +11,7 @@ namespace OnlineVeterinary.Models
         
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Username { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Sickness { get; set; }
         public PetEnum PetType { get; set; }

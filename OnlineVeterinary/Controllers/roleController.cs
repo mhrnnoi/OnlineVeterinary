@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +20,10 @@ namespace OnlineVeterinary.Controllers
             _rolemanager = rolemanager;
         }
         [HttpPost]
-        public async Task<IActionResult> createRole( RoleEnum role)
+                [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+                             Roles = "Admin")]
+
+        public async Task<IActionResult> CreateRoleAsync( RoleEnum role)
         {
             if (!ModelState.IsValid)
             {
@@ -34,7 +39,9 @@ namespace OnlineVeterinary.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteRole( RoleEnum role)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
+        public async Task<IActionResult> DeleteRoleAsync( RoleEnum role)
         {
             if (!ModelState.IsValid)
             {

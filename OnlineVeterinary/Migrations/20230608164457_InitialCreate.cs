@@ -252,6 +252,7 @@ namespace OnlineVeterinary.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(nullable: true),
+                    Username = table.Column<string>(nullable: true),
                     DateOfBirth = table.Column<DateTime>(nullable: false),
                     Sickness = table.Column<string>(nullable: true),
                     PetType = table.Column<int>(nullable: false),
