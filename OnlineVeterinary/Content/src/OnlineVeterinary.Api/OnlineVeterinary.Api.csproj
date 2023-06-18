@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <ProjectReference Include="..\OnlineVeterinary.Contracts\OnlineVeterinary.Contracts.csproj" />
+    <ProjectReference Include="..\OnlineVeterinary.Infrastructure\OnlineVeterinary.Infrastructure.csproj" />
+    <ProjectReference Include="..\OnlineVeterinary.Application\OnlineVeterinary.Application.csproj" />
+  </ItemGroup>
+
+</Project>

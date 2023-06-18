@@ -7,34 +7,44 @@ namespace OnlineVeterinary.Controllers.Services
 {
     public class AuthResponse
     {
-         public static bool Result { get; set; }
-        public static List<string> Error { get; set; }
-        public static string Token { get; set; }
+        public bool Result { get; private set; }
+        public List<string> Error { get; private set; }
+        public string Token { get; private set; }
 
-        
-        public static List<string> NoRole()
+
+        public static AuthResponse NoRole()
         {
-            Error = new List<string>() {"this role is not available"};
-            Result = false;
-            Token = null;
-            return new List<string>(){Error.ToString() + Result.ToString() + Token};
+
+            return new AuthResponse()
+            {
+                Error = new List<string>() { "this role is not available" },
+                Result = false,
+                Token = null
+            };
+
         }
-        public static List<string> Success(string token)
+        public static AuthResponse Success(string token)
         {
-            Error = null;
-            Result = true;
-            Token = token;
-            return new List<string>(){Error.ToString() + Result.ToString() + Token};
+            return new AuthResponse()
+            {
+                Error = null,
+                Result = true,
+                Token = token
+            };
+
         }
 
-        
 
-        public static List<string> IncorrectPasswordOrEmail()
+
+        public static AuthResponse IncorrectPasswordOrEmail()
         {
-            Error = new List<string> { "email or Password is incorrect" };
-            Result = false;
-            Token = null;
-            return new List<string>(){Error.ToString() + Result.ToString() + Token};
+            return new AuthResponse()
+            {
+                Error = new List<string> { "email or Password is incorrect" },
+                Result = false,
+                Token = null
+            };
+
 
         }
 
@@ -47,34 +57,43 @@ namespace OnlineVeterinary.Controllers.Services
 
         // }
 
-        public static List<string> SomethingWentWrong()
+        public static AuthResponse SomethingWentWrong()
         {
-            Error = new List<string> { "something went wrong " };
-            Result = false;
-            Token = null;
-            return new List<string>(){Error.ToString() + Result.ToString() + Token};
-
-        }
-
-        
-
-        public static List<string> InvalidInput()
-        {
-            Error = new List<string> { "entered invalid input" };
-            Result = false;
-            Token = null;
-            return new List<string>(){Error.ToString() + Result.ToString() + Token};
+            return new AuthResponse()
+            {
+                Error = new List<string> { "something went wrong " },
+                Result = false,
+                Token = null
+            };
 
 
 
         }
 
-        public static List<string> EmailAlreadyExist()
+
+
+        public static AuthResponse InvalidInput()
         {
-            Error = new List<string> { "entered email is alraedy exist you cant sign up whit it" };
-            Result = false;
-            Token = null;
-            return new List<string>(){Error.ToString() + Result.ToString() + Token};
+
+
+            return new AuthResponse()
+            {
+                Error = new List<string> { "entered invalid input" },
+                Result = false,
+                Token = null
+            };
+
+        }
+
+        public static AuthResponse EmailAlreadyExist()
+        {
+            return new AuthResponse()
+            {
+                Error = new List<string> { "entered email is alraedy exist you cant sign up whit it" },
+                Result = false,
+                Token = null
+            };
+
 
 
 

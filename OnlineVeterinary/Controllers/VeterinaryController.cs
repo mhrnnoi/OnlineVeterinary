@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,8 @@ using Microsoft.EntityFrameworkCore;
 using OnlineVeterinary.Data;
 using OnlineVeterinary.Models;
 using OnlineVeterinary.Models.DTOs;
+using OnlineVeterinary.Models.DTOs.Incoming;
+using OnlineVeterinary.Models.DTOs.OutGoing;
 using OnlineVeterinary.Models.Identity;
 
 namespace OnlineVeterinary.Controllers
@@ -25,29 +28,32 @@ namespace OnlineVeterinary.Controllers
     {
         private DataContext _context;
         private UserManager<IdentityUser> _userManager;
+        private readonly IMapper _mapper;
 
         public VeterinaryController(DataContext context,
-                 UserManager<IdentityUser> userManager)
+                 UserManager<IdentityUser> userManager,
+                 IMapper mapper)
         {
             _context = context;
             _userManager = userManager;
+            _mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllCareGiversAsync()
         {
             if (await _context.CareGivers.CountAsync() > 0)
             {
-                return Ok(_context.CareGivers.ToList());
+                return Ok(_mapper.Map<CareGiverDTO>(await _context.CareGivers.ToListAsync()));
             }
             return NotFound("There is no CareGiver");
 
         }
         [HttpGet]
-        public async Task<IActionResult> GetReservationsAsync()
+        public async Task<IActionResult> GetAllReservationsAsync()
         {
             if (await _context.ReservedTimes.CountAsync() > 0)
             {
-                return Ok(_context.ReservedTimes.ToList());
+                return Ok(_mapper.Map<ReservedTimesDTO>(await _context.ReservedTimes.ToListAsync()));
             }
 
             return NotFound("There is no Reservation");
@@ -58,7 +64,7 @@ namespace OnlineVeterinary.Controllers
         {
             if (await _context.Pets.CountAsync() > 0)
             {
-                return Ok(_context.Pets.ToList());
+                return Ok(_mapper.Map<PetDTO>(await _context.Pets.ToListAsync()));
             }
             return NotFound("There is no Pet");
 
@@ -68,7 +74,7 @@ namespace OnlineVeterinary.Controllers
         {
             if (await _context.Doctors.CountAsync() > 0)
             {
-                return Ok(_context.Doctors.ToList());
+                return Ok(_mapper.Map<DoctorDTO>(await _context.Doctors.ToListAsync()));
             }
 
             return NotFound("There is no doctor");
@@ -77,8 +83,8 @@ namespace OnlineVeterinary.Controllers
 
 
 
-        [HttpPost]
-        public async Task<IActionResult> GetSpecificDoctorAsync([FromBody] DoctorDTO doctor)
+        [HttpGet]
+        public async Task<IActionResult> GetSpecificDoctorAsync(string doctorUsername)
         {
             if (await _context.Doctors.CountAsync() > 0)
             {
@@ -86,18 +92,20 @@ namespace OnlineVeterinary.Controllers
                 {
                     return BadRequest("what ?");
                 }
-                else if (!(await _context.Doctors.AnyAsync(a => a.Email == doctor.Email)))
+                else if (!(await _context.Doctors.AnyAsync(a => a.UserName == doctorUsername)))
                 {
-                    return NotFound($"there is no  doctor with {doctor.Email} email");
+                    return NotFound($"there is no  doctor with {doctorUsername} email");
                 }
-                return Ok(await _context.Doctors.SingleAsync(a => a.Email == doctor.Email));
+                var doctor = _mapper.Map<DoctorDTO>(await _context.Doctors.SingleAsync(a => a.UserName == doctorUsername));
+                //return doctor DTO
+                return Ok(doctor);
             }
 
             return NotFound("There is no doctor");
 
         }
-        [HttpPost]
-        public async Task<IActionResult> GetSpecigicCareGiverAsync([FromBody] CareGiverDTO careGiver)
+        [HttpGet]
+        public async Task<IActionResult> GetSpecigicCareGiverAsync(string careGiverUsername)
         {
             if (await _context.CareGivers.CountAsync() > 0)
             {
@@ -105,18 +113,36 @@ namespace OnlineVeterinary.Controllers
                 {
                     return BadRequest("what ?");
                 }
-                else if (!(await _context.CareGivers.AnyAsync(a => a.Email == careGiver.Email)))
+                else if (!(await _context.CareGivers.AnyAsync(a => a.Email == careGiverUsername)))
                 {
-                    return NotFound($"there is no caregiver with {careGiver.Email} email");
+                    return NotFound($"there is no caregiver with {careGiverUsername} email");
                 }
-                return Ok(await _context.CareGivers.SingleAsync(a => a.Email == careGiver.Email));
+                //return cg DTO
+                var careGiver = _mapper.Map<CareGiverDTO>(await _context.CareGivers.SingleAsync(a => a.UserName == careGiverUsername));
+
+
+                return Ok(careGiver);
             }
 
             return NotFound("There is no caregiver");
 
         }
-        [HttpPost]
-        public async Task<IActionResult> GetSpecificPetAsync([FromBody] PetDTO pet)
+
+        [HttpGet]
+        public async Task<ActionResult> GetSpecificReservation(string code)
+        {
+            if (await _context.ReservedTimes.CountAsync() > 0)
+            {
+                var Guidcode = Guid.Parse(code);
+                return Ok(_mapper.Map<ReservedTimesDTO>(await _context.ReservedTimes.SingleAsync(a => a.Code == Guidcode)));
+            }
+
+            return Ok("There is no doctor");
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSpecificPetAsync(string petUsername)
         {
             if (await _context.Pets.CountAsync() > 0)
             {
@@ -124,11 +150,13 @@ namespace OnlineVeterinary.Controllers
                 {
                     return BadRequest("what ?");
                 }
-                else if (!(await _context.Pets.AnyAsync(a => a.Username == pet.Username)))
+                else if (!(await _context.Pets.AnyAsync(a => a.Username == petUsername)))
                 {
-                    return NotFound($"there is no pet with {pet.Username} username");
+                    return NotFound($"there is no pet with {petUsername} username");
                 }
-                return Ok(await _context.Pets.SingleAsync(a => a.Username == pet.Username));
+                var pet = _mapper.Map<PetDTO>(await _context.Pets.SingleAsync(a => a.Username == petUsername));
+
+                return Ok(pet);
             }
 
             return NotFound("There is no pet");
@@ -136,7 +164,8 @@ namespace OnlineVeterinary.Controllers
         }
         [HttpDelete]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Doctor")]
-        public async Task<IActionResult> DeleteSpecificDoctorAsync([FromBody] DoctorDTO doctor)
+        //doctors just can delete him or her self
+        public async Task<IActionResult> DeleteSpecificDoctorAsync(string doctorUsernamer)
         {
             if (await _context.Doctors.CountAsync() > 0)
             {
@@ -144,17 +173,24 @@ namespace OnlineVeterinary.Controllers
                 {
                     return BadRequest("what ?");
                 }
-                else if (!(await _context.Doctors.AnyAsync(a => a.Email == doctor.Email)))
+                else if (!(await _context.Doctors.AnyAsync(a => a.UserName == doctorUsernamer)))
                 {
-                    return BadRequest($"there is no doctor with {doctor.Email} email");
+                    return BadRequest($"there is no doctor with {doctorUsernamer} username");
                 }
-
-                if (HttpContext.User.Claims.Any(a => a.Value == doctor.Email))
+                //check user role and email
+                if (HttpContext.User.Claims.Any(a => a.Value == "Admin"))
                 {
-                    _context.Doctors.Remove(await _context.Doctors.SingleAsync(a => a.Email == doctor.Email));
-                    await _userManager.DeleteAsync(await _userManager.FindByEmailAsync(doctor.Email));
+                    _context.Doctors.Remove(await _context.Doctors.SingleAsync(a => a.UserName == doctorUsernamer));
+                    await _userManager.DeleteAsync(await _userManager.FindByEmailAsync(doctorUsernamer));
                     await _context.SaveChangesAsync();
-                    return Ok();
+                    return Ok("deleted by Admin");
+                }
+                else if (HttpContext.User.Claims.Any(a => a.Value == doctorUsernamer))
+                {
+                    _context.Doctors.Remove(await _context.Doctors.SingleAsync(a => a.UserName == doctorUsernamer));
+                    await _userManager.DeleteAsync(await _userManager.FindByEmailAsync(doctorUsernamer));
+                    await _context.SaveChangesAsync();
+                    return Ok("deleted by you");
                 }
                 return BadRequest("you can't delete someone else plz login with the account you want delete ");
 
@@ -165,8 +201,8 @@ namespace OnlineVeterinary.Controllers
         }
         [HttpDelete]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,CareGiver")]
-
-        public async Task<IActionResult> DeleteSpecificCareGiverAsync([FromBody] CareGiverDTO careGiver)
+        //cg can delete him or her self
+        public async Task<IActionResult> DeleteSpecificCareGiverAsync(string careGiverUsername)
         {
             if (await _context.CareGivers.CountAsync() > 0)
             {
@@ -174,16 +210,23 @@ namespace OnlineVeterinary.Controllers
                 {
                     return BadRequest("what ?");
                 }
-                else if (!(await _context.CareGivers.AnyAsync(a => a.Email == careGiver.Email)))
+                else if (!(await _context.CareGivers.AnyAsync(a => a.UserName == careGiverUsername)))
                 {
-                    return BadRequest($"there is not careGiver with {careGiver.Email} email");
+                    return BadRequest($"there is not careGiver with {careGiverUsername} email");
                 }
-                if (HttpContext.User.Claims.Any(a => a.Value == careGiver.Email))
+                if (HttpContext.User.Claims.Any(a => a.Value == "Admin"))
                 {
-                    _context.CareGivers.Remove(await _context.CareGivers.SingleAsync(a => a.Email == careGiver.Email));
-                    await _userManager.DeleteAsync(await _userManager.FindByEmailAsync(careGiver.Email));
+                    _context.CareGivers.Remove(await _context.CareGivers.SingleAsync(a => a.UserName == careGiverUsername));
+                    await _userManager.DeleteAsync(await _userManager.FindByEmailAsync(careGiverUsername));
                     await _context.SaveChangesAsync();
-                    return Ok();
+                    return Ok("deleted by Admin");
+                }
+                else if (HttpContext.User.Claims.Any(a => a.Value == careGiverUsername))
+                {
+                    _context.CareGivers.Remove(await _context.CareGivers.SingleAsync(a => a.UserName == careGiverUsername));
+                    await _userManager.DeleteAsync(await _userManager.FindByEmailAsync(careGiverUsername));
+                    await _context.SaveChangesAsync();
+                    return Ok("deleted by You");
                 }
                 return BadRequest("you can't delete someone else plz login with the account you want delete ");
 
@@ -195,7 +238,7 @@ namespace OnlineVeterinary.Controllers
         [HttpDelete]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,CareGiver")]
 
-        public async Task<IActionResult> DeleteSpecificPetAsync([FromBody] PetDTO pet)
+        public async Task<IActionResult> DeleteSpecificPetAsync(string petUsername)
         {
             if (await _context.Pets.CountAsync() > 0)
             {
@@ -203,20 +246,31 @@ namespace OnlineVeterinary.Controllers
                 {
                     return BadRequest("what ?");
                 }
-                else if (!(await _context.Pets.AnyAsync(a => a.Username == pet.Username)))
+                else if (!(await _context.Pets.AnyAsync(a => a.Username == petUsername)))
                 {
-                    return BadRequest($"there is no  pet with {pet.Username} username");
+                    return BadRequest($"there is no  pet with {petUsername} username");
                 }
-                var Targetpet = await _context.Pets.SingleAsync(a => a.Username == pet.Username);
-                var petCareGiverId = await _context.CareGiverPet.FirstOrDefaultAsync(a => a.PetId == Targetpet.Id);
-                var careGiverId = await _context.CareGivers.FirstAsync(a => a.Id == petCareGiverId.CareGiverId);
-                if (HttpContext.User.Claims.Any(a => a.Value == careGiverId.Email))
+                var Targetpet = await _context.Pets.SingleAsync(a => a.Username == petUsername);
+
+                if (HttpContext.User.Claims.Any(a => a.Value == "Admin"))
                 {
-                    _context.Pets.Remove(await _context.Pets.SingleAsync(a => a.Username == pet.Username));
+                    _context.Pets.Remove(Targetpet);
                     await _context.SaveChangesAsync();
-                    return Ok();
+                    return Ok("deleted by Admin");
                 }
-                return BadRequest("you can't delete someone else pet");
+                else
+                {
+                    var petCareGiverId = await _context.CareGiverPet.FirstOrDefaultAsync(a => a.PetId == Targetpet.Id);
+                    var careGiverId = await _context.CareGivers.FirstAsync(a => a.Id == petCareGiverId.CareGiverId);
+                    if (HttpContext.User.Claims.Any(a => a.Value == careGiverId.Email))
+                    {
+                        _context.Pets.Remove(await _context.Pets.SingleAsync(a => a.Username == petUsername));
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+                    return BadRequest("you can't delete someone else pet");
+                }
+
             }
 
             return Ok("There is no pet");
@@ -225,40 +279,9 @@ namespace OnlineVeterinary.Controllers
 
 
 
-        // [HttpGet]
-        // public async Task<ActionResult> GetAllVisitorsAsync()
-        // {
-        //     if (await _context.Visitors.CountAsync() > 0)
-        //     {
-        //         return Ok(_context.Visitors.ToList());
-        //     }
 
-        //     return Ok("There is no Visitor");
 
-        // }
-        // [HttpPost]
-        // public async Task<ActionResult> GetVistor([FromBody] Visitor doctor)
-        // {
-        //     if (_context.Doctors.Count() > 0)
-        //     {
-        //         return Ok(await _context.Doctors.SingleAsync(a=> a.UserName == doctor.UserName));
-        //     }
 
-        //     return Ok("There is no doctor");
-
-        // }
-
-        // [HttpPost]
-        // public async Task<ActionResult> GetSpecificReservation([FromBody] DoctorDTO doctor)
-        // {
-        //     if (await _context.Doctors.CountAsync() > 0)
-        //     {
-        //         return Ok(await _context.Doctors.SingleAsync(a=> a.UserName == doctor.UserName));
-        //     }
-
-        //     return Ok("There is no doctor");
-
-        // }
 
 
 
@@ -268,7 +291,7 @@ namespace OnlineVeterinary.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CareGiver")]
-        public async Task<IActionResult> AddPetAsync([FromBody] PetDTO pet)
+        public async Task<IActionResult> AddPetAsync([FromBody] PetRegisterDTO pet)
         {
 
             if (!ModelState.IsValid)
@@ -293,14 +316,18 @@ namespace OnlineVeterinary.Controllers
                 }
 
             }
+            //new Pet()
+            // {
+            //     PetType = pet.PetType,
+            //     Sickness = pet.Sickness,
+            //     Name = pet.Name,
+            //     DateOfBirth = pet.DateOfBirth,
+            //     Username = pet.Username
 
-            var newPet = new Pet()
-            {
-                PetType = pet.PetType,
-                Sickness = pet.Sickness,
-                Name = pet.Name,
-                DateOfBirth = pet.DateOfBirth
-            };
+            // };
+            var newPet = _mapper.Map<Pet>(pet);
+            newPet.TimesOfCured = 0;
+
             await _context.Pets.AddAsync(newPet);
             await _context.SaveChangesAsync();
             await _context.CareGiverPet.AddAsync(new CareGiverPet()
@@ -320,16 +347,22 @@ namespace OnlineVeterinary.Controllers
             return Ok("Pet Added");
         }
 
-        [HttpPost]
+        [HttpGet]
         // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CareGiver")]
 
-        public async Task<IActionResult> GetAllPetsOfSpecificCareGiverAsync([FromBody] CareGiverDTO careGiver)
+        public async Task<IActionResult> GetAllPetsOfSpecificCareGiverAsync(string careGiverUsername)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("what do you entered");
             }
-            if (!await _context.CareGivers.AnyAsync(a => careGiver.Email == a.Email))
+            if (!await _context.CareGivers.AnyAsync(a => careGiverUsername == a.UserName))
+            {
+                return NotFound("there is no cg with this user name");
+            }
+            var targetCareGiver = await _context.CareGivers.SingleOrDefaultAsync(a => a.UserName == careGiverUsername);
+
+            if (!await _context.CareGiverPet.AnyAsync(a => a.CareGiverId == targetCareGiver.Id))
             {
                 return NotFound("you dont have any pet");
             }
@@ -337,20 +370,19 @@ namespace OnlineVeterinary.Controllers
             //     {
             //         return BadRequest("you cant get some")
             //     }
-            var targetCareGiver = await _context.CareGivers.FirstAsync(a => a.Email == careGiver.Email);
-            var targetCareGiverPet = _context.CareGiverPet.Where(a => a.CareGiverId == targetCareGiver.Id).ToList();
+            var targetCareGiverPet = await _context.CareGiverPet.Where(a => a.CareGiverId == targetCareGiver.Id).ToListAsync();
             var pets = new List<Pet>();
             foreach (var row in targetCareGiverPet)
             {
                 pets.Add(await _context.Pets.FirstAsync(a => a.Id == row.PetId));
             }
 
-            return Ok(pets);
+            return Ok(_mapper.Map<PetDTO>(pets));
         }
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CareGiver")]
-        public async Task<IActionResult> FormaVisitAsSoonAsPossibleAsync([FromBody] DoctorDTO doctor)
+        public async Task<IActionResult> FormaVisitAsSoonAsPossibleAsync([FromQuery] string doctorUsername, [FromBody] string petUserName)
         {
             var WorkTimeStart = Convert.ToDateTime("07:0:0");
             var WorkTimeEnd = Convert.ToDateTime("21:0:0");
@@ -360,37 +392,62 @@ namespace OnlineVeterinary.Controllers
                 return BadRequest("what is that ");
             }
 
-            var IsDrExist = await _context.Doctors.AnyAsync(a => a.UserName == doctor.Email);
+            var IsDrExist = await _context.Doctors.AnyAsync(a => a.UserName == doctorUsername);
             if (!IsDrExist)
             {
                 return BadRequest("dr is not exist");
             }
+            var IsPetExist = await _context.Pets.AnyAsync(a => a.Username == petUserName);
+            if (!IsPetExist)
+            {
+                return BadRequest("pet is not exist");
+            }
+            var careGiverEmail = HttpContext.User.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.Email).Value;
 
-            var targetDr = await _context.Doctors.SingleOrDefaultAsync(a => a.Email == doctor.Email);
-            var careGiverEmail = HttpContext.User.Claims.First(a => a.Type == JwtRegisteredClaimNames.Email).Value;
             var targetCareGiver = await _context.CareGivers.SingleOrDefaultAsync(a => a.Email == careGiverEmail);
+
             if (!await _context.CareGiverPet.AnyAsync(a => a.CareGiverId == targetCareGiver.Id))
             {
                 return BadRequest("you dont have any pet");
             }
-            var careGiverPetrow = await _context.CareGiverPet.FirstOrDefaultAsync(a => a.Id == targetCareGiver.Id);
-            var drReservedTimes = await _context.ReservedTimes.Where(a => a.DrId == targetCareGiver.Id).CountAsync();
+            var targetPet = await _context.Pets.SingleOrDefaultAsync(a => a.Username == petUserName);
+            var careGiverPetrow = _context.CareGiverPet.Where(a => a.Id == targetCareGiver.Id);
+
+            if (!await careGiverPetrow.AnyAsync(a => a.PetId == targetPet.Id))
+            {
+                return BadRequest("you dont have this pet");
+
+            }
+
+            var targetDr = await _context.Doctors.SingleOrDefaultAsync(a => a.UserName == doctorUsername);
+
+
+            var drReservedTimes = await _context.ReservedTimes.Where(a => a.DrId == targetDr.Id).CountAsync();
             if (drReservedTimes < 1)
             {
                 if (DateTime.Now.AddHours(1).TimeOfDay >= WorkTimeStart.TimeOfDay && DateTime.Now.AddHours(1).TimeOfDay <= WorkTimeEnd.AddMinutes(-30).TimeOfDay)
                 {
                     var reservedTime = DateTime.Now.AddHours(1);
+
                     await _context.ReservedTimes.AddAsync(new ReservedTimes()
+
 
                     {
                         ReservedTime = reservedTime,
                         DrId = targetDr.Id,
                         CgId = targetCareGiver.Id,
-                        PetId = careGiverPetrow.PetId
+                        PetId = targetPet.Id,
+                        CareGiverUserName = targetCareGiver.UserName,
+                        DrUserName = targetDr.UserName,
+                        PetUserName = petUserName,
+                        Code = Guid.NewGuid(),
+                        
+
+
 
                     });
                     await _context.SaveChangesAsync();
-                    return Ok(reservedTime);
+                    return Ok(_mapper.Map<ReservedTimesDTO>(reservedTime));
                 }
                 else
                 {
@@ -403,19 +460,25 @@ namespace OnlineVeterinary.Controllers
                         ReservedTime = reservedTime,
                         DrId = targetDr.Id,
                         CgId = targetCareGiver.Id,
-                        PetId = careGiverPetrow.PetId
+                        PetId = targetPet.Id,
+                        CareGiverUserName = targetCareGiver.UserName,
+                        DrUserName = targetDr.UserName,
+                        PetUserName = petUserName,
+                        Code = Guid.NewGuid()
+
+
 
                     });
                     await _context.SaveChangesAsync();
 
-                    return Ok(reservedTime);
+                    return Ok(_mapper.Map<ReservedTimesDTO>(reservedTime));
 
                 }
 
             }
             else
             {
-                var lastReserved = _context.ReservedTimes.Where(a => a.DrId == targetDr.Id).OrderBy(a => a.ReservedTime).Last();
+                var lastReserved = await _context.ReservedTimes.Where(a => a.DrId == targetDr.Id).OrderBy(a => a.ReservedTime).LastOrDefaultAsync();
 
                 if (lastReserved.ReservedTime.AddMinutes(30).TimeOfDay <= WorkTimeEnd.AddMinutes(-30).TimeOfDay)
                 {
@@ -426,11 +489,17 @@ namespace OnlineVeterinary.Controllers
                         ReservedTime = reservedTime,
                         DrId = targetDr.Id,
                         CgId = targetCareGiver.Id,
-                        PetId = careGiverPetrow.PetId
+                        PetId = targetPet.Id,
+
+                        CareGiverUserName = targetCareGiver.UserName,
+                        DrUserName = targetDr.UserName,
+                        PetUserName = petUserName,
+                        Code = Guid.NewGuid()
+
 
                     });
                     await _context.SaveChangesAsync();
-                    return Ok(reservedTime);
+                    return Ok(_mapper.Map<ReservedTimesDTO>(reservedTime));
                 }
                 else
                 {
@@ -444,11 +513,17 @@ namespace OnlineVeterinary.Controllers
                         ReservedTime = reservedTime,
                         DrId = targetDr.Id,
                         CgId = targetCareGiver.Id,
-                        PetId = careGiverPetrow.PetId
+                        PetId = targetPet.Id,
+
+                        CareGiverUserName = targetCareGiver.UserName,
+                        DrUserName = targetDr.UserName,
+                        PetUserName = petUserName,
+                        Code = Guid.NewGuid()
+
 
                     });
                     await _context.SaveChangesAsync();
-                    return Ok(reservedTime);
+                    return Ok(_mapper.Map<ReservedTimesDTO>(reservedTime));
 
                 }
             }
@@ -458,7 +533,7 @@ namespace OnlineVeterinary.Controllers
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CareGiver")]
 
-        public async Task<IActionResult> FormaVisitSpecificTimeAsync([FromQuery] DoctorDTO doctor, [FromBody] DateTime time)
+        public async Task<IActionResult> FormaVisitSpecificTimeAsync([FromQuery] string doctorUsername, [FromBody] string petUserName, DateTime time)
         {
             var WorkTimeStart = Convert.ToDateTime("07:0:0");
             var WorkTimeEnd = Convert.ToDateTime("21:0:0");
@@ -473,29 +548,44 @@ namespace OnlineVeterinary.Controllers
                 return BadRequest("the time you entered is past time");
 
             }
-
-
-            var isDrExist = await _context.Doctors.AnyAsync(a => a.Email == doctor.Email);
-
-            if (!isDrExist)
-            {
-                return BadRequest("dr is not exist");
-            }
-
             if (!(time.TimeOfDay >= WorkTimeStart.TimeOfDay && time.TimeOfDay <= WorkTimeEnd.AddMinutes(-30).TimeOfDay))
             {
                 return BadRequest("the time you entered is out of work time ");
             }
-            var dr = await _context.Doctors.SingleOrDefaultAsync(a => a.Email == doctor.Email);
-            var drReservedTimes = await _context.ReservedTimes.Where(a => a.DrId == dr.Id).CountAsync();
 
-            var cgEmail = HttpContext.User.Claims.First(a => a.Type == JwtRegisteredClaimNames.Email).Value;
-            var cg = await _context.CareGivers.SingleOrDefaultAsync(a => a.Email == cgEmail);
-            if (!await _context.CareGiverPet.AnyAsync(a => a.CareGiverId == cg.Id))
+
+            var IsDrExist = await _context.Doctors.AnyAsync(a => a.UserName == doctorUsername);
+            if (!IsDrExist)
+            {
+                return BadRequest("dr is not exist");
+            }
+
+
+            var IsPetExist = await _context.Pets.AnyAsync(a => a.Username == petUserName);
+            if (!IsPetExist)
+            {
+                return BadRequest("pet is not exist");
+            }
+            var careGiverEmail = HttpContext.User.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.Email).Value;
+
+            var targetCareGiver = await _context.CareGivers.SingleOrDefaultAsync(a => a.Email == careGiverEmail);
+
+            if (!await _context.CareGiverPet.AnyAsync(a => a.CareGiverId == targetCareGiver.Id))
             {
                 return BadRequest("you dont have any pet");
             }
-            var petrow = await _context.CareGiverPet.FirstOrDefaultAsync(a => a.Id == cg.Id);
+            var targetPet = await _context.Pets.SingleOrDefaultAsync(a => a.Username == petUserName);
+            var careGiverPetrow = _context.CareGiverPet.Where(a => a.Id == targetCareGiver.Id);
+
+            if (!await careGiverPetrow.AnyAsync(a => a.PetId == targetPet.Id))
+            {
+                return BadRequest("you dont have this pet");
+
+            }
+
+            var targetDr = await _context.Doctors.SingleOrDefaultAsync(a => a.UserName == doctorUsername);
+
+            var drReservedTimes = await _context.ReservedTimes.Where(a => a.DrId == targetDr.Id).CountAsync();
 
 
             if (drReservedTimes < 1)
@@ -506,19 +596,26 @@ namespace OnlineVeterinary.Controllers
 
                 {
                     ReservedTime = reservedTime,
-                    DrId = dr.Id,
-                    CgId = cg.Id,
-                    PetId = petrow.PetId
+                    DrId = targetDr.Id,
+                    CgId = targetCareGiver.Id,
+                    PetId = targetPet.Id,
+
+                    CareGiverUserName = targetCareGiver.UserName,
+                    DrUserName = targetDr.UserName,
+                    PetUserName = petUserName,
+                        Code = Guid.NewGuid()
+
+
 
                 });
                 await _context.SaveChangesAsync();
-                return Ok(reservedTime);
+                return Ok(_mapper.Map<ReservedTimesDTO>(reservedTime));
 
             }
             var checkIsExist = await _context.ReservedTimes.AnyAsync(a => a.ReservedTime == time);
             if (checkIsExist)
             {
-                return BadRequest("the you want book is booked by another person");
+                return BadRequest("the time you want is booked by another person");
             }
             var checkDay = await _context.ReservedTimes.AnyAsync(a => a.ReservedTime.Day == time.Day);
             if (!checkDay)
@@ -528,13 +625,19 @@ namespace OnlineVeterinary.Controllers
 
                 {
                     ReservedTime = reservedTime,
-                    DrId = dr.Id,
-                    CgId = cg.Id,
-                    PetId = petrow.PetId
+                    DrId = targetDr.Id,
+                    CgId = targetCareGiver.Id,
+                    PetId = targetPet.Id,
+
+                    CareGiverUserName = targetCareGiver.UserName,
+                    DrUserName = targetDr.UserName,
+                    PetUserName = petUserName,
+                        Code = Guid.NewGuid()
+
 
                 });
                 await _context.SaveChangesAsync();
-                return Ok(reservedTime);
+                return Ok(_mapper.Map<ReservedTimesDTO>(reservedTime));
 
 
             }
@@ -557,13 +660,19 @@ namespace OnlineVeterinary.Controllers
 
                         {
                             ReservedTime = reservedTime,
-                            DrId = dr.Id,
-                            CgId = cg.Id,
-                            PetId = petrow.PetId
+                            DrId = targetDr.Id,
+                            CgId = targetCareGiver.Id,
+                            PetId = targetPet.Id,
+
+                            CareGiverUserName = targetCareGiver.UserName,
+                            DrUserName = targetDr.UserName,
+                            PetUserName = petUserName,
+                        Code = Guid.NewGuid()
+
 
                         });
                         await _context.SaveChangesAsync();
-                        return Ok(reservedTime);
+                        return Ok(_mapper.Map<ReservedTimesDTO>(reservedTime));
 
                     }
                     else
@@ -582,9 +691,15 @@ namespace OnlineVeterinary.Controllers
 
                         {
                             ReservedTime = reservedTime,
-                            DrId = dr.Id,
-                            CgId = cg.Id,
-                            PetId = petrow.PetId
+                            DrId = targetDr.Id,
+                            CgId = targetCareGiver.Id,
+                            PetId = targetPet.Id,
+
+                            CareGiverUserName = targetCareGiver.UserName,
+                            DrUserName = targetDr.UserName,
+                            PetUserName = petUserName,
+                        Code = Guid.NewGuid()
+
 
                         });
                         await _context.SaveChangesAsync();
@@ -593,7 +708,7 @@ namespace OnlineVeterinary.Controllers
                     }
                     else
                     {
-                        return BadRequest("you time has conflic with its close bigger time plz pick another time");
+                        return BadRequest("your time has problem  (not enough time for visit cuz of another person near to this time(bigger)) plz pick another time");
                     }
                 }
                 else
@@ -607,13 +722,19 @@ namespace OnlineVeterinary.Controllers
 
                         {
                             ReservedTime = reservedTime,
-                            DrId = dr.Id,
-                            CgId = cg.Id,
-                            PetId = petrow.PetId
+                            DrId = targetDr.Id,
+                            CgId = targetCareGiver.Id,
+                            PetId = targetPet.Id,
+
+                            CareGiverUserName = targetCareGiver.UserName,
+                            DrUserName = targetDr.UserName,
+                            PetUserName = petUserName,
+                        Code = Guid.NewGuid()
+
 
                         });
                         await _context.SaveChangesAsync();
-                        return Ok(reservedTime);
+                        return Ok(_mapper.Map<ReservedTimesDTO>(reservedTime));
                     }
                     else
                     {

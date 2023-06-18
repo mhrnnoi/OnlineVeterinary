@@ -4,15 +4,19 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using OnlineVeterinary.Controllers.Services;
 using OnlineVeterinary.Data;
+using OnlineVeterinary.Data.Entity;
 using OnlineVeterinary.Models;
 using OnlineVeterinary.Models.DTOs;
 using OnlineVeterinary.Models.Identity;
@@ -26,6 +30,7 @@ namespace OnlineVeterinary.Controllers
         private readonly IConfiguration _config;
         private readonly UserManager<IdentityUser> _userManagar;
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
         private readonly RoleManager<IdentityRole> _roleManager;
 
 
@@ -33,10 +38,12 @@ namespace OnlineVeterinary.Controllers
         public AuthController(UserManager<IdentityUser> userManager,
                                 RoleManager<IdentityRole> roleManager,
                                 IConfiguration config,
-                                DataContext context)
+                                DataContext context,
+                                IMapper mapper)
         {
             _roleManager = roleManager;
             _context = context;
+            _mapper = mapper;
             _config = config;
             _userManagar = userManager;
         }
@@ -65,7 +72,8 @@ namespace OnlineVeterinary.Controllers
             {
                 Email = userRegister.Email,
                 UserName = userRegister.UserName
-                
+
+
             };
 
             var createUserResult = await _userManagar.CreateAsync(identityUser, userRegister.Password);
@@ -73,9 +81,9 @@ namespace OnlineVeterinary.Controllers
             if (createUserResult.Succeeded)
             {
                 await _userManagar.AddToRoleAsync(identityUser, userRegister.UserRole.ToString());
-
-                var token = await GenerateTokenAsync(identityUser);
+                await _context.SaveChangesAsync();
                 await AddingToDataBaseAsync(userRegister);
+                var token = await GenerateTokenAsync(identityUser);
 
                 return Ok(AuthResponse.Success(token));
 
@@ -89,17 +97,22 @@ namespace OnlineVeterinary.Controllers
         {
             if (userRegister.UserRole == RoleEnum.Doctor)
             {
-                _context.Doctors.Add(new Doctor()
+                await _context.Doctors.AddAsync(new Doctor()
                 {
                     UserName = userRegister.UserName,
-                    Email = userRegister.Email
+                    Email = userRegister.Email,
+                    IsAvailable = false, //should complete their profile
+                    Dislikes = 0,
+                    Likes = 0,
+                    SuccesfulVisits = 0
 
+                    
 
                 });
             }
             else
             {
-                _context.CareGivers.Add(new CareGiver()
+                await _context.CareGivers.AddAsync(new CareGiver()
                 {
                     Email = userRegister.Email,
                     UserName = userRegister.UserName
@@ -124,6 +137,7 @@ namespace OnlineVeterinary.Controllers
 
             var userRoles = await _userManagar.GetRolesAsync(user);
 
+            //add role claim 
             foreach (var role in userRoles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -169,7 +183,7 @@ namespace OnlineVeterinary.Controllers
             {
                 return BadRequest(AuthResponse.InvalidInput());
             }
-            var userSearchResult = await _userManagar.FindByEmailAsync(userLogin.Email);
+            var userSearchResult = await _userManagar.Users.SingleOrDefaultAsync(a => a.Email == userLogin.EmailOrUserName || a.UserName == userLogin.EmailOrUserName);
             if (userSearchResult == null)
             {
                 return BadRequest(AuthResponse.IncorrectPasswordOrEmail());

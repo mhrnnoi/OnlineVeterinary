@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +20,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnlineVeterinary.Data;
+using OnlineVeterinary.Models;
+using OnlineVeterinary.Models.DTOs;
+using OnlineVeterinary.Profiles;
 
 namespace OnlineVeterinary
 {
@@ -35,6 +39,7 @@ namespace OnlineVeterinary
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddDbContext<DataContext>(o =>
             {
                 o.UseNpgsql(Configuration.GetConnectionString("Defaultconnection"));

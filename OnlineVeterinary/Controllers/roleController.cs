@@ -6,22 +6,23 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace OnlineVeterinary.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class roleController : ControllerBase
+    public class RoleController : ControllerBase
     {
         private RoleManager<IdentityRole> _rolemanager;
 
-        public roleController(RoleManager<IdentityRole> rolemanager)
+        public RoleController(RoleManager<IdentityRole> rolemanager)
         {
             _rolemanager = rolemanager;
         }
         [HttpPost]
-                [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-                             Roles = "Admin")]
+                // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+                //              Roles = "Admin")]
 
         public async Task<IActionResult> CreateRoleAsync( RoleEnum role)
         {
@@ -35,11 +36,11 @@ namespace OnlineVeterinary.Controllers
                 return BadRequest("This role already exist");
             }
             await _rolemanager.CreateAsync(new IdentityRole(role.ToString()));
-            return Ok(_rolemanager.Roles.ToList());
+            return Ok(_rolemanager.Roles.ToListAsync());
         }
 
         [HttpDelete]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 
         public async Task<IActionResult> DeleteRoleAsync( RoleEnum role)
         {
@@ -53,7 +54,7 @@ namespace OnlineVeterinary.Controllers
                 return BadRequest("This role is not there ");
             }
             await _rolemanager.DeleteAsync(CheckRoleExist);
-            return Ok(_rolemanager.Roles.ToList());
+            return Ok(_rolemanager.Roles.ToListAsync());
         }
     }
 }
