@@ -41,7 +41,7 @@ namespace OnlineVeterinary.Infrastructure.Persistence
                 throw new Exception("careGiver with this Id is not exist");
             }
             return _mapper.Map<CareGiverDTO>(careGiver);
-
+//
         }
 
         public Task Update(CareGiverDTO entity)
