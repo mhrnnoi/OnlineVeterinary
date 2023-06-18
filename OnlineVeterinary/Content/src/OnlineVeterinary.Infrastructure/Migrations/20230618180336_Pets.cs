@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OnlineVeterinary.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Pets : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,6 +25,21 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_CareGivers", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Pets",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CareGiverId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PetType = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pets", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
@@ -32,6 +47,9 @@ namespace OnlineVeterinary.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CareGivers");
+
+            migrationBuilder.DropTable(
+                name: "Pets");
         }
     }
 }

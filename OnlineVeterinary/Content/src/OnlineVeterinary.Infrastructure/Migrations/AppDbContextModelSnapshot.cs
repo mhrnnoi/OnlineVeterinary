@@ -48,6 +48,30 @@ namespace OnlineVeterinary.Infrastructure.Migrations
 
                     b.ToTable("CareGivers");
                 });
+
+            modelBuilder.Entity("OnlineVeterinary.Domain.Pet.Entities.Pet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CareGiverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PetType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pets");
+                });
 #pragma warning restore 612, 618
         }
     }

@@ -16,6 +16,7 @@ namespace OnlineVeterinary.Infrastructure
         {
             services.AddMapping();
             services.AddScoped<ICareGiverRepository, CareGiverRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<AppDbContext>();
 
             return services;

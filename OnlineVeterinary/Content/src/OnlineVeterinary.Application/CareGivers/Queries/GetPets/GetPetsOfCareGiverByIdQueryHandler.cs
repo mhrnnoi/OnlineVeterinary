@@ -7,28 +7,25 @@ using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Application.DTOs;
 
-
-namespace OnlineVeterinary.Application.CareGivers.Queries.GetAll
+namespace OnlineVeterinary.Application.CareGivers.Queries.GetPets
 {
-    public class GetAllCareGiversQueryHandler : IRequestHandler<GetAllCareGiversQuery, List<CareGiverDTO>>
+    public class GetPetsOfCareGiverByIdQueryHandler : IRequestHandler<GetPetsOfCareGiverByIdQuery, List<PetDTO>>
     {
         private readonly ICareGiverRepository _careGiverRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public GetAllCareGiversQueryHandler(ICareGiverRepository careGiverRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public GetPetsOfCareGiverByIdQueryHandler(ICareGiverRepository careGiverRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _careGiverRepository = careGiverRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public async Task<List<CareGiverDTO>> Handle(GetAllCareGiversQuery request, CancellationToken cancellationToken)
+        public async Task<List<PetDTO>> Handle(GetPetsOfCareGiverByIdQuery request, CancellationToken cancellationToken)
         {
-            var careGivers = await _careGiverRepository.GetAllAsync();
-            var careGiversDTO = _mapper.Map<List<CareGiverDTO>>(careGivers);
+            var pets =  await _careGiverRepository.GetPetsAsync(request.Id);
             await _unitOfWork.SaveChangesAsync();
-
-            return careGiversDTO;
+            return pets;
         }
     }
 }
