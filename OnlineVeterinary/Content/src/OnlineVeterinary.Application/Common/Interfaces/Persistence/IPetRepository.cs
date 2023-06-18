@@ -8,8 +8,8 @@ using OnlineVeterinary.Domain.Pet.Entities;
 
 namespace OnlineVeterinary.Application.Common.Interfaces.Persistence
 {
-    public interface ICareGiverRepository : IGenericRepository<CareGiver>
+    public interface IPetRepository : IGenericRepository<Pet>
     {
-        Task<List<Pet>> GetPetsAsync(Guid id);
+        Task<CareGiver> GetCareGiverOfPet(Guid id);
     }
 }

@@ -23,9 +23,10 @@ namespace OnlineVeterinary.Application.CareGivers.Queries.GetPets
         }
         public async Task<List<PetDTO>> Handle(GetPetsOfCareGiverByIdQuery request, CancellationToken cancellationToken)
         {
-            var pets =  await _careGiverRepository.GetPetsAsync(request.Id);
+            var pets = await _careGiverRepository.GetPetsAsync(request.Id);
+            var petsDTO = _mapper.Map<List<PetDTO>>(pets);
             await _unitOfWork.SaveChangesAsync();
-            return pets;
+            return petsDTO;
         }
     }
 }

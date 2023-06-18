@@ -57,10 +57,10 @@ namespace OnlineVeterinary.Infrastructure.Persistence
             return careGiver;
         }
 
-        public async Task<List<PetDTO>> GetPetsAsync(Guid id)
+        public async Task<List<Pet>> GetPetsAsync(Guid id)
         {
             var pets = await _petDbSet.Where(x => x.CareGiverId == id).ToListAsync();
-            return _mapper.Map<List<PetDTO>>(pets) ;
+            return pets;
         }
 
         public async Task UpdateAsync(CareGiver entity)
