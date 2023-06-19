@@ -5,11 +5,18 @@ using System.Threading.Tasks;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OnlineVeterinary.Application.Pets.Commands.Add;
+using OnlineVeterinary.Application.Pets.Commands.Delete;
+using OnlineVeterinary.Application.Pets.Commands.Update;
+using OnlineVeterinary.Application.Pets.Queries.GetAll;
+using OnlineVeterinary.Application.Pets.Queries.GetCareGiver;
+using OnlineVeterinary.Application.Pets.Queries.GetPet;
+using OnlineVeterinary.Contracts.Pets.Request;
 
 namespace OnlineVeterinary.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class PetController : ApiController
     {
         private readonly IMapper _mapper;
@@ -19,63 +26,60 @@ namespace OnlineVeterinary.Api.Controllers
             _mediatR = mediatR;
             _mapper = mapper;
         }
-        GetAllPetsAsync
-        GetSpecificPetAsync
-        DeleteSpecificPetAsync
-        AddPetAsync
 
         [HttpPost]
-        public async Task<IActionResult> AddCareGiverAsync(AddCareGiverRequest request)
+        public async Task<IActionResult> AddPetAsync(AddPetRequest request)
         {
-            var command = _mapper.Map<AddCareGiverCommand>(request);
+            var command = _mapper.Map<AddPetCommand>(request);
 
-            var careGiver = await _mediatR.Send(command);
-            return Ok(careGiver);
+            var petDto = await _mediatR.Send(command);
+            return Ok(petDto);
 
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllCareGiversAsync()
+        public async Task<IActionResult> GetAllPetsAsync()
         {
-            var query = new GetAllCareGiversQuery();
-            var careGivers = await _mediatR.Send(query);
-            return Ok(careGivers);
-
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetCareGiverByIdAsync(Guid id)
-        {
-            var query = new GetCareGiverByIdQuery(id);
-            var careGiver = await _mediatR.Send(query);
-            return Ok(careGiver);
-
+            var query = new GetAllPetsQuery();
+            var PetsDto = await _mediatR.Send(query);
+            return Ok(PetsDto);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPetsOfCareGiverByIdAsync(Guid id)
+        public async Task<IActionResult> GetPetByIdAsync(Guid id)
         {
-            var query = new GetPetsOfCareGiverByIdQuery(id);
-            var pets = await _mediatR.Send(query);
-            return Ok(pets);
+            var query = new GetPetByIdQuery(id);
+            var PetsDto = await _mediatR.Send(query);
+            return Ok(PetsDto);
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCareGiverOfPetByIdAsync(Guid id)
+        {
+            var query = new GetCareGiverOfPetByIdQuery(id);
+            var careGiverDto = await _mediatR.Send(query);
+            return Ok(careGiverDto);
 
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateCareGiverAsync(UpdateCareGiverRequest request)
+        public async Task<IActionResult> UpdatePetAsync(UpdatePetRequest request)
         {
-            var command = _mapper.Map<UpdateCareGiverCommand>(request);
+            var command = _mapper.Map<UpdatePetCommand>(request);
 
-            var careGiver = await _mediatR.Send(command);
-            return Ok(careGiver);
+            var petDto = await _mediatR.Send(command);
+            return Ok(petDto);
 
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteCareGiverByIdAsync(Guid id)
+        public async Task<IActionResult> DeletePetByIdAsync(Guid id)
         {
-            var query = new DeleteCareGiverByIdCommand(id);
-            var result = await _mediatR.Send(query);
+            var command = new DeletePetByIdCommand(id);
+            var result = await _mediatR.Send(command);
             return Ok(result);
 
         }
     }
+
 }

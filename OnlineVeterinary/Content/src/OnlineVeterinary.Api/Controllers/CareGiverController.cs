@@ -31,24 +31,24 @@ namespace OnlineVeterinary.Api.Controllers
         {
             var command = _mapper.Map<AddCareGiverCommand>(request);
 
-            var careGiver = await _mediatR.Send(command);
-            return Ok(careGiver);
+            var careGiverDto = await _mediatR.Send(command);
+            return Ok(careGiverDto);
 
         }
         [HttpGet]
         public async Task<IActionResult> GetAllCareGiversAsync()
         {
             var query = new GetAllCareGiversQuery();
-            var careGivers = await _mediatR.Send(query);
-            return Ok(careGivers);
+            var careGiverDto = await _mediatR.Send(query);
+            return Ok(careGiverDto);
 
         }
         [HttpGet]
         public async Task<IActionResult> GetCareGiverByIdAsync(Guid id)
         {
             var query = new GetCareGiverByIdQuery(id);
-            var careGiver = await _mediatR.Send(query);
-            return Ok(careGiver);
+            var careGiverDto = await _mediatR.Send(query);
+            return Ok(careGiverDto);
 
         }
 
@@ -56,8 +56,8 @@ namespace OnlineVeterinary.Api.Controllers
         public async Task<IActionResult> GetPetsOfCareGiverByIdAsync(Guid id)
         {
             var query = new GetPetsOfCareGiverByIdQuery(id);
-            var pets = await _mediatR.Send(query);
-            return Ok(pets);
+            var petsDto = await _mediatR.Send(query);
+            return Ok(petsDto);
 
         }
 
@@ -66,16 +66,16 @@ namespace OnlineVeterinary.Api.Controllers
         {
             var command = _mapper.Map<UpdateCareGiverCommand>(request);
 
-            var careGiver = await _mediatR.Send(command);
-            return Ok(careGiver);
+            var careGiverDto = await _mediatR.Send(command);
+            return Ok(careGiverDto);
 
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteCareGiverByIdAsync(Guid id)
         {
-            var query = new DeleteCareGiverByIdCommand(id);
-            var result = await _mediatR.Send(query);
+            var command = new DeleteCareGiverByIdCommand(id);
+            var result = await _mediatR.Send(command);
             return Ok(result);
 
         }

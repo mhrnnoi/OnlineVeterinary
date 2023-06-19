@@ -49,6 +49,33 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                     b.ToTable("CareGivers");
                 });
 
+            modelBuilder.Entity("OnlineVeterinary.Domain.Doctor.Entities.Doctor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Doctors");
+                });
+
             modelBuilder.Entity("OnlineVeterinary.Domain.Pet.Entities.Pet", b =>
                 {
                     b.Property<Guid>("Id")
@@ -58,8 +85,8 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                     b.Property<Guid>("CareGiverId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -71,6 +98,44 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Pets");
+                });
+
+            modelBuilder.Entity("OnlineVeterinary.Domain.ReservedTime.Entities.ReservedTime", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CareGiverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CareGiverLastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("DateOfReservation")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DrLastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PetName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<TimeOnly>("TimeOfReservation")
+                        .HasColumnType("time without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReservedTimes");
                 });
 #pragma warning restore 612, 618
         }

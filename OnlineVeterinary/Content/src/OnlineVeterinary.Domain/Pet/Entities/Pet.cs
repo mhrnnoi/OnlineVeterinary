@@ -11,7 +11,7 @@ namespace OnlineVeterinary.Domain.Pet.Entities
         public Guid Id { get; set; }
         public Guid CareGiverId { get; set; }
         public string Name { get; set; } = string.Empty;
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
         public PetType PetType { get; set; }
 
     }

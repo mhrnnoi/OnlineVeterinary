@@ -17,14 +17,14 @@ namespace OnlineVeterinary.Infrastructure.Persistence
 
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-        private readonly DbSet<CareGiver> _careGiverDbSet;
+        private ICareGiverRepository _careGiverRepository;
         private readonly DbSet<Pet> _petDbSet;
 
-        public PetRepository(AppDbContext context, IMapper mapper)
+        public PetRepository(AppDbContext context, IMapper mapper, ICareGiverRepository careGiverRepository)
         {
             _context = context;
             _mapper = mapper;
-            _careGiverDbSet = _context.Set<CareGiver>();
+            _careGiverRepository = careGiverRepository;
             _petDbSet = _context.Set<Pet>();
         }
 
@@ -59,8 +59,8 @@ namespace OnlineVeterinary.Infrastructure.Persistence
 
         public async Task<CareGiver> GetCareGiverOfPet(Guid id)
         {
-            var pet = await _petDbSet.SingleOrDefaultAsync(x => x.Id == id);
-            var careGiver = await _careGiverDbSet.SingleOrDefaultAsync(y => y.Id == pet.CareGiverId);
+            var pet = await GetByIdAsync(id);
+            var careGiver = await _careGiverRepository.GetByIdAsync(pet.Id);
             return careGiver;
         }
 
