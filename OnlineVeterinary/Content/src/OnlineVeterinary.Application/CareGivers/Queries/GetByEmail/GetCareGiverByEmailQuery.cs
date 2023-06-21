@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using ErrorOr;
 using MediatR;
 using OnlineVeterinary.Application.DTOs;
+using OnlineVeterinary.Domain.CareGivers.Entities;
 
 namespace OnlineVeterinary.Application.CareGivers.Queries.GetByEmail
 {
-    public record GetCareGiverByEmailQuery(string email) : IRequest<ErrorOr<CareGiverDTO>>;
+    public record GetCareGiverByEmailQuery(string email) : IRequest<ErrorOr<CareGiver>>;
    
 }

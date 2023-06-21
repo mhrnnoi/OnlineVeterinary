@@ -5,6 +5,6 @@ using System.Threading.Tasks;
 
 namespace OnlineVeterinary.Contracts.Authentication.Request
 {
-    public record LoginRequest(string Email, string Password);
+    public record LoginOrDeleteRequest(string Email, string Password, int RoleType);
     
 }

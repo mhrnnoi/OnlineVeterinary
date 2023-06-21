@@ -7,10 +7,11 @@ using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Application.DTOs;
+using OnlineVeterinary.Domain.Doctor.Entities;
 
 namespace OnlineVeterinary.Application.Doctors.Queries.GetByEmail
 {
-    public class GetDoctorByEmailQueryHandler : IRequestHandler<GetDoctorByEmailQuery, ErrorOr<DoctorDTO>>
+    public class GetDoctorByEmailQueryHandler : IRequestHandler<GetDoctorByEmailQuery, ErrorOr<Doctor>>
     {
 
        
@@ -24,10 +25,10 @@ namespace OnlineVeterinary.Application.Doctors.Queries.GetByEmail
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public async Task<ErrorOr<DoctorDTO>> Handle(GetDoctorByEmailQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<Doctor>> Handle(GetDoctorByEmailQuery request, CancellationToken cancellationToken)
         {
-           var doctorDto = await _doctorRepository.GetByEmailAsync(request.email);
-           return _mapper.Map<DoctorDTO>(doctorDto);
+           var doctor = await _doctorRepository.GetByEmailAsync(request.email);
+           return _mapper.Map<Doctor>(doctor);
         }
     }
 }

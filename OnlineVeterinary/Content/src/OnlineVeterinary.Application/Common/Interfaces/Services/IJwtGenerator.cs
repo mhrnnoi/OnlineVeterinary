@@ -9,6 +9,6 @@ namespace OnlineVeterinary.Application.Common.Interfaces.Services
 {
     public interface IJwtGenerator
     {
-        Jwt GenerateToken(RegisterCommand result);
+        Jwt GenerateToken(User user);
     }
 }

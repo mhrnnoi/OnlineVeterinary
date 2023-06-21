@@ -1,6 +1,7 @@
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OnlineVeterinary.Application.Auth.Delete;
 using OnlineVeterinary.Application.Auth.Login;
 using OnlineVeterinary.Application.Auth.Register;
 using OnlineVeterinary.Contracts.Authentication.Request;
@@ -31,7 +32,7 @@ namespace OnlineVeterinary.Api.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginOrDeleteRequest request)
         {
 
             var command = _mapper.Map<LoginCommand>(request);
@@ -45,14 +46,14 @@ namespace OnlineVeterinary.Api.Controllers
         }
        
         [HttpDelete]
-        public async Task<IActionResult> DeleteAccountAsync([FromBody] DeleteRequest request)
+        public async Task<IActionResult> DeleteAccountAsync([FromBody] LoginOrDeleteRequest request)
         {
 
             var command = _mapper.Map<DeleteCommand>(request);
 
             var result = await _mediatR.Send(command);
             
-            return result.Match(result => Ok("Login", result),   errors => Problem(errors));
+            return result.Match(result => Ok("Login"),   errors => Problem(errors));
 
 
 

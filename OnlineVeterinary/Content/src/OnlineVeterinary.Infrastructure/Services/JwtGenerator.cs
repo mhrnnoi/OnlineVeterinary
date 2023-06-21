@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using OnlineVeterinary.Application.Auth.Common;
 using OnlineVeterinary.Application.Auth.Register;
 using OnlineVeterinary.Application.Common;
+using OnlineVeterinary.Application.Common.Interfaces;
 using OnlineVeterinary.Application.Common.Interfaces.Services;
 
 namespace OnlineVeterinary.Infrastructure.Services
@@ -24,7 +25,7 @@ namespace OnlineVeterinary.Infrastructure.Services
             _jwtOptions = jwtOptions.Value;
             _dateTimeProvider = dateTimeProvider;
         }
-        public Jwt GenerateToken(RegisterCommand request)
+        public Jwt GenerateToken(User user)
         {
             var key = Encoding.UTF8.GetBytes(_jwtOptions.Secret);
             var mySigningCredentials =  new SigningCredentials(new SymmetricSecurityKey(key) , SecurityAlgorithms.HmacSha512);
@@ -32,9 +33,9 @@ namespace OnlineVeterinary.Infrastructure.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.GivenName, request.FirstName),
-                new Claim(JwtRegisteredClaimNames.FamilyName, request.LastName),
-                new Claim(JwtRegisteredClaimNames.Email, request.Email)
+                new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
+                new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
             var securityToken =  new JwtSecurityToken(claims : myCliaims, audience: _jwtOptions.Audience, signingCredentials : mySigningCredentials, expires : _dateTimeProvider.Utc.AddMinutes(_jwtOptions.ExpiryMinutes));
             var handler =  new  JwtSecurityTokenHandler();

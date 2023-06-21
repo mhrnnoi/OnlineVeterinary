@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OnlineVeterinary.Application.Auth.Common;
 using OnlineVeterinary.Application.Auth.Register;
 using OnlineVeterinary.Application.Common;
+using OnlineVeterinary.Application.Common.Interfaces;
 using OnlineVeterinary.Application.DTOs;
 using OnlineVeterinary.Application.Pets.Commands.Add;
 using OnlineVeterinary.Application.Pets.Commands.Update;
@@ -28,7 +29,7 @@ namespace OnlineVeterinary.Infrastructure.Mapping
             config.NewConfig<AddPetCommand,Pet>().Map(dest => dest.PetType, src => (PetType) Enum.Parse(typeof(PetType), src.PetType.ToString()));
             config.NewConfig<UpdatePetCommand,Pet>().Map(dest => dest.PetType, src => (PetType) Enum.Parse(typeof(PetType), src.PetType.ToString()));
             config.NewConfig<Pet,PetDTO>().Map(dest => dest.PetType, src => (PetType)src.PetType);
-            config.NewConfig<(RegisterCommand, Jwt),AuthResult>().Map(dest => dest , src => src.Item1)
+            config.NewConfig<(User, Jwt),AuthResult>().Map(dest => dest , src => src.Item1)
                             .Map(dest => dest.Token , src => src.Item2.token);
             
 

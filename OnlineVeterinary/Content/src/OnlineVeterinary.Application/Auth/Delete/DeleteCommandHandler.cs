@@ -5,43 +5,41 @@ using System.Threading.Tasks;
 using ErrorOr;
 using MapsterMapper;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using OnlineVeterinary.Application.Auth.Common;
+using OnlineVeterinary.Application.CareGivers.Commands.DeleteById;
 using OnlineVeterinary.Application.CareGivers.Queries.GetByEmail;
-using OnlineVeterinary.Application.Common;
-using OnlineVeterinary.Application.Common.Interfaces;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Application.Common.Interfaces.Services;
+using OnlineVeterinary.Application.Doctors.Commands.DeleteById;
 using OnlineVeterinary.Application.Doctors.Queries.GetByEmail;
-using OnlineVeterinary.Application.DTOs;
 
-namespace OnlineVeterinary.Application.Auth.Login
+namespace OnlineVeterinary.Application.Auth.Delete
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, ErrorOr<AuthResult>>
+    public class DeleteCommandHandler : IRequestHandler<DeleteCommand, ErrorOr <string>>
     {
-        private readonly IMapper _mapper;
+          private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
         private readonly IJwtGenerator _jwtGenerator;
 
-        public LoginCommandHandler(ICareGiverRepository careGiverRepository, IMapper mapper, IUnitOfWork unitOfWork, IMediator mediator, IJwtGenerator jwtGenerator)
+        public DeleteCommandHandler(ICareGiverRepository careGiverRepository, IMapper mapper, IUnitOfWork unitOfWork, IMediator mediator, IJwtGenerator jwtGenerator)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _mediator = mediator;
             _jwtGenerator = jwtGenerator;
         }
-        public async Task<ErrorOr<AuthResult>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<string>> Handle(DeleteCommand request, CancellationToken cancellationToken)
         {
+            
+            Guid id;
+            ErrorOr<string> deleteResult;
 
-            AuthResult authResult;
-            Jwt token;
-            User user;
+            
             if (request.RoleType == 0)
             {
-                var command = _mapper.Map<GetDoctorByEmailQuery>(request);
+                var command = _mapper.Map<GetDoctorByEmailQuery>(request.Email);
                 var result = await _mediator.Send(command);
-
+                id = result.Value.Id;
                 if (result.IsError)
                 {
                     return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
@@ -49,9 +47,8 @@ namespace OnlineVeterinary.Application.Auth.Login
                 }
                 if (result.Value.Password == request.Password)
                 {
-                    user = _mapper.Map<User>(result);
-                    token = _jwtGenerator.GenerateToken(user);
-                    authResult = _mapper.Map<AuthResult>((user, token));
+                    var deleteCommand = new DeleteDoctorByIdCommand(id);
+                    deleteResult = await _mediator.Send(deleteCommand);
                 }
                 else
                 {
@@ -62,8 +59,9 @@ namespace OnlineVeterinary.Application.Auth.Login
             }
             else if (request.RoleType == 1)
             {
-                var command = _mapper.Map<GetCareGiverByEmailQuery>(request);
+                var command = _mapper.Map<GetCareGiverByEmailQuery>(request.Email);
                 var result = await _mediator.Send(command);
+                id = result.Value.Id;
                 if (result.IsError)
                 {
                     return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
@@ -71,9 +69,8 @@ namespace OnlineVeterinary.Application.Auth.Login
                 }
                 if (result.Value.Password == request.Password)
                 {
-                    user = _mapper.Map<User>(result);
-                    token = _jwtGenerator.GenerateToken(user);
-                    authResult = _mapper.Map<AuthResult>((user, token));
+                    var deleteCommand = new DeleteCareGiverByIdCommand(id);
+                    deleteResult = await _mediator.Send(deleteCommand);
                 }
                 else
                 {
@@ -97,10 +94,7 @@ namespace OnlineVeterinary.Application.Auth.Login
             // var token =   _jwtGenerator.GenerateToken(request);
             // var authResult = _mapper.Map<AuthResult>((request,token));
 
-            return authResult;
-
-
-
+            return deleteResult;
         }
     }
 }

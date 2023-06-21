@@ -9,6 +9,7 @@ using MediatR;
 using OnlineVeterinary.Application.Admin.Commands;
 using OnlineVeterinary.Application.Auth.Common;
 using OnlineVeterinary.Application.CareGivers.Commands.Add;
+using OnlineVeterinary.Application.Common.Interfaces;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Application.Common.Interfaces.Services;
 using OnlineVeterinary.Application.Doctors.Commands.Add;
@@ -37,21 +38,21 @@ namespace OnlineVeterinary.Application.Auth.Register
             if (request.RoleType == 0)
             {
                 var command =  _mapper.Map<AddDoctorCommand>(request);
-                var result =  await _mediator.Send(command);
+                await _mediator.Send(command);
                 
 
             }
             else if (request.RoleType == 1)
             {
                 var command =  _mapper.Map<AddCareGiverCommand>(request);
-                var result =  await _mediator.Send(command);
+                await _mediator.Send(command);
            
 
             }
             else if (request.RoleType == 2)
             {
                 var command =  _mapper.Map<AddAdminCommand>(request);
-                var result =  await _mediator.Send(command);
+                await _mediator.Send(command);
           
 
             }
@@ -60,9 +61,9 @@ namespace OnlineVeterinary.Application.Auth.Register
                 return Error.Failure();
             }
             
-            
-            var token =   _jwtGenerator.GenerateToken(request);
-            var authResult = _mapper.Map<AuthResult>((request,token));
+            var user =  _mapper.Map<User>(request);
+            var token =   _jwtGenerator.GenerateToken(user);
+            var authResult = _mapper.Map<AuthResult>((user,token));
 
             return authResult;
 
