@@ -2,7 +2,10 @@ using System;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
+using OnlineVeterinary.Domain.CareGivers.Entities;
 using OnlineVeterinary.Domain.Doctor.Entities;
+using OnlineVeterinary.Domain.Pet.Entities;
+using OnlineVeterinary.Domain.Reservation.Entities;
 using OnlineVeterinary.Infrastructure.Persistence.DataContext;
 
 namespace OnlineVeterinary.Infrastructure.Persistence
@@ -40,7 +43,10 @@ namespace OnlineVeterinary.Infrastructure.Persistence
             return await _doctorDbSet.ToListAsync();
         }
 
-
+        public Task<Doctor> GetByEmailAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<Doctor> GetByIdAsync(Guid id)
         {
@@ -57,6 +63,17 @@ namespace OnlineVeterinary.Infrastructure.Persistence
         //     var pets = await _petDbSet.Where(x => x.DoctorId == id).ToListAsync();
         //     return pets;
         // }
+        // public async Task<List<CareGiver>> GetCareGiversAsync(Guid id)
+        // {
+        //     var pets = await _petDbSet.Where(x => x.DoctorId == id).ToListAsync();
+        //     return pets;
+        // }
+        // public async Task<List<Reservation>> GetReservationsAsync(Guid id)
+        // {
+        //     var pets = await _petDbSet.Where(x => x.DoctorId == id).ToListAsync();
+        //     return pets;
+        // }
+
 
         public async Task UpdateAsync(Doctor entity)
         {

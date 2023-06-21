@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +10,6 @@ using OnlineVeterinary.Contracts.Doctors.Request;
 
 namespace OnlineVeterinary.Api.Controllers
 {
-    [ApiController]
     [Route("api/[controller]/[action]")]
     public class DoctorController : ApiController
     {

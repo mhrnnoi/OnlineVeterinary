@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using OnlineVeterinary.Application.Auth.Common;
+using OnlineVeterinary.Application.Auth.Register;
+using OnlineVeterinary.Application.Common;
+using OnlineVeterinary.Application.Common.Interfaces.Services;
+
+namespace OnlineVeterinary.Infrastructure.Services
+{
+    public class JwtGenerator : IJwtGenerator
+    {
+        private readonly JwtSettings _jwtOptions;
+        private IDateTimeProvider _dateTimeProvider;
+
+        public JwtGenerator(IOptions<JwtSettings> jwtOptions, IDateTimeProvider dateTimeProvider)
+        {
+            _jwtOptions = jwtOptions.Value;
+            _dateTimeProvider = dateTimeProvider;
+        }
+        public Jwt GenerateToken(RegisterCommand request)
+        {
+            var key = Encoding.UTF8.GetBytes(_jwtOptions.Secret);
+            var mySigningCredentials =  new SigningCredentials(new SymmetricSecurityKey(key) , SecurityAlgorithms.HmacSha512);
+            var myCliaims = new [] 
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.GivenName, request.FirstName),
+                new Claim(JwtRegisteredClaimNames.FamilyName, request.LastName),
+                new Claim(JwtRegisteredClaimNames.Email, request.Email)
+            };
+            var securityToken =  new JwtSecurityToken(claims : myCliaims, audience: _jwtOptions.Audience, signingCredentials : mySigningCredentials, expires : _dateTimeProvider.Utc.AddMinutes(_jwtOptions.ExpiryMinutes));
+            var handler =  new  JwtSecurityTokenHandler();
+            return new Jwt(handler.WriteToken(securityToken));
+        }
+    }
+}

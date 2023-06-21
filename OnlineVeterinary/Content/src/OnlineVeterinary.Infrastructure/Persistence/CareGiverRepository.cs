@@ -45,7 +45,10 @@ namespace OnlineVeterinary.Infrastructure.Persistence
             return await _careGiverDbSet.ToListAsync();
         }
 
-
+        public Task<CareGiver> GetByEmailAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<CareGiver> GetByIdAsync(Guid id)
         {

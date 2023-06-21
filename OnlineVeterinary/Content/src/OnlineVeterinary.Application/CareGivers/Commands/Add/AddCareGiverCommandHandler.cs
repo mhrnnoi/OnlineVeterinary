@@ -1,4 +1,5 @@
 using System;
+using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
@@ -7,7 +8,7 @@ using OnlineVeterinary.Domain.CareGivers.Entities;
 
 namespace OnlineVeterinary.Application.CareGivers.Commands.Add
 {
-    public class AddCareGiverCommandHandler : IRequestHandler<AddCareGiverCommand, CareGiverDTO>
+    public class AddCareGiverCommandHandler : IRequestHandler<AddCareGiverCommand, ErrorOr<CareGiverDTO>>
     {
         private readonly ICareGiverRepository _careGiverRepository;
         private readonly IMapper _mapper;
@@ -19,7 +20,7 @@ namespace OnlineVeterinary.Application.CareGivers.Commands.Add
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public async Task<CareGiverDTO> Handle(AddCareGiverCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<CareGiverDTO>> Handle(AddCareGiverCommand request, CancellationToken cancellationToken)
         {
             var careGiver = _mapper.Map<CareGiver>(request);
             await _careGiverRepository.AddAsync(careGiver);

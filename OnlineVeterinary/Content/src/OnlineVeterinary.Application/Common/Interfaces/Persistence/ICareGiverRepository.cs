@@ -11,5 +11,6 @@ namespace OnlineVeterinary.Application.Common.Interfaces.Persistence
     public interface ICareGiverRepository : IGenericRepository<CareGiver>
     {
         Task<List<Pet>> GetPetsAsync(Guid id);
+        Task<CareGiver> GetByEmailAsync(string email);
     }
 }

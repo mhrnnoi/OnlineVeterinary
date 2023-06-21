@@ -57,7 +57,7 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReservedTimes",
+                name: "Reservations",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -72,7 +72,7 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReservedTimes", x => x.Id);
+                    table.PrimaryKey("PK_Reservations", x => x.Id);
                 });
         }
 
@@ -89,7 +89,7 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                 name: "Pets");
 
             migrationBuilder.DropTable(
-                name: "ReservedTimes");
+                name: "Reservations");
         }
     }
 }

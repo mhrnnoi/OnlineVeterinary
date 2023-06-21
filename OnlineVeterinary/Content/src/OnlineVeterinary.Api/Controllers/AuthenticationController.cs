@@ -1,15 +1,64 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using MapsterMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OnlineVeterinary.Application.Auth.Login;
+using OnlineVeterinary.Application.Auth.Register;
+using OnlineVeterinary.Contracts.Authentication.Request;
 
 namespace OnlineVeterinary.Api.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class AuthenticationController : ApiController
     {
+        private readonly IMapper _mapper;
+        private readonly IMediator _mediatR;
+        public AuthenticationController(IMediator mediatR, IMapper mapper)
+        {
+            _mediatR = mediatR;
+            _mapper = mapper;
+        }
+        [HttpPost]
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
+        {
+            
+            var command = _mapper.Map<RegisterCommand>(request);
+            
+            var result = await _mediatR.Send(command);
+            
+            return result.Match(result => CreatedAtAction("Register", result),   errors => Problem(errors));
+
+
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
+        {
+
+            var command = _mapper.Map<LoginCommand>(request);
+            
+            var result = await _mediatR.Send(command);
+            
+            return result.Match(result => Ok(result),   errors => Problem(errors));
+
+
+
+        }
+       
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAccountAsync([FromBody] DeleteRequest request)
+        {
+
+            var command = _mapper.Map<DeleteCommand>(request);
+
+            var result = await _mediatR.Send(command);
+            
+            return result.Match(result => Ok("Login", result),   errors => Problem(errors));
+
+
+
+        }
+      
+        
         
     }
 }

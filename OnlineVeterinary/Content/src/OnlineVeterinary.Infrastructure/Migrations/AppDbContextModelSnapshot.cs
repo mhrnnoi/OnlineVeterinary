@@ -100,7 +100,7 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                     b.ToTable("Pets");
                 });
 
-            modelBuilder.Entity("OnlineVeterinary.Domain.ReservedTime.Entities.ReservedTime", b =>
+            modelBuilder.Entity("OnlineVeterinary.Domain.Reservation.Entities.Reservation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -135,7 +135,7 @@ namespace OnlineVeterinary.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReservedTimes");
+                    b.ToTable("Reservations");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +11,6 @@ using OnlineVeterinary.Contracts.CareGivers.Request;
 
 namespace OnlineVeterinary.Api.Controllers
 {
-    [ApiController]
     [Route("api/[controller]/[action]")]
     public class CareGiverController : ApiController
     {
@@ -27,12 +22,16 @@ namespace OnlineVeterinary.Api.Controllers
             _mapper = mapper;
         }
         [HttpPost]
-        public async Task<IActionResult> AddCareGiverAsync(AddCareGiverRequest request)
+        public async Task<IActionResult> AddCareGiverAsync([FromBody] AddCareGiverRequest request)
         {
+
             var command = _mapper.Map<AddCareGiverCommand>(request);
 
-            var careGiverDto = await _mediatR.Send(command);
-            return Ok(careGiverDto);
+            var result = await _mediatR.Send(command);
+            
+            return result.Match(result => CreatedAtAction("AddCareGiver", result),   errors => Problem(errors));
+
+
 
         }
         [HttpGet]
@@ -43,7 +42,7 @@ namespace OnlineVeterinary.Api.Controllers
             return Ok(careGiverDto);
 
         }
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetCareGiverByIdAsync(Guid id)
         {
             var query = new GetCareGiverByIdQuery(id);

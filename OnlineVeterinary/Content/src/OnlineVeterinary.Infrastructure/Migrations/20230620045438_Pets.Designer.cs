@@ -12,7 +12,7 @@ using OnlineVeterinary.Infrastructure.Persistence.DataContext;
 namespace OnlineVeterinary.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230619084649_Pets")]
+    [Migration("20230620045438_Pets")]
     partial class Pets
     {
         /// <inheritdoc />
@@ -103,7 +103,7 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                     b.ToTable("Pets");
                 });
 
-            modelBuilder.Entity("OnlineVeterinary.Domain.ReservedTime.Entities.ReservedTime", b =>
+            modelBuilder.Entity("OnlineVeterinary.Domain.Reservation.Entities.Reservation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -138,7 +138,7 @@ namespace OnlineVeterinary.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReservedTimes");
+                    b.ToTable("Reservations");
                 });
 #pragma warning restore 612, 618
         }
