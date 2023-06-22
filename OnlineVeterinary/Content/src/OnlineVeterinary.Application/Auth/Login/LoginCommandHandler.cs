@@ -6,6 +6,7 @@ using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using OnlineVeterinary.Application.Admins.Queries;
 using OnlineVeterinary.Application.Auth.Common;
 using OnlineVeterinary.Application.CareGivers.Queries.GetByEmail;
 using OnlineVeterinary.Application.Common;
@@ -20,82 +21,38 @@ namespace OnlineVeterinary.Application.Auth.Login
     public class LoginCommandHandler : IRequestHandler<LoginCommand, ErrorOr<AuthResult>>
     {
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
         private readonly IJwtGenerator _jwtGenerator;
 
         public LoginCommandHandler(ICareGiverRepository careGiverRepository, IMapper mapper, IUnitOfWork unitOfWork, IMediator mediator, IJwtGenerator jwtGenerator)
         {
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
             _jwtGenerator = jwtGenerator;
         }
         public async Task<ErrorOr<AuthResult>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
 
-            AuthResult authResult;
-            Jwt token;
-            User user;
-            if (request.RoleType == 0)
+
+            IRequest<ErrorOr<User>> command = request.RoleType switch
             {
-                var command = _mapper.Map<GetDoctorByEmailQuery>(request);
-                var result = await _mediator.Send(command);
+                0 => _mapper.Map<GetDoctorByEmailQuery>(request),
+                1 => _mapper.Map<GetCareGiverByEmailQuery>(request),
+                _ => _mapper.Map<GetAdminByEmailQuery>(request)
 
-                if (result.IsError)
-                {
-                    return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
+            };
 
-                }
-                if (result.Value.Password == request.Password)
-                {
-                    user = _mapper.Map<User>(result);
-                    token = _jwtGenerator.GenerateToken(user);
-                    authResult = _mapper.Map<AuthResult>((user, token));
-                }
-                else
-                {
-                    return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
-                }
+            var user = await _mediator.Send(command);
 
+            if (user.IsError || user.Value.Password != request.Password)
+            {
+                return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
 
             }
-            else if (request.RoleType == 1)
-            {
-                var command = _mapper.Map<GetCareGiverByEmailQuery>(request);
-                var result = await _mediator.Send(command);
-                if (result.IsError)
-                {
-                    return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
 
-                }
-                if (result.Value.Password == request.Password)
-                {
-                    user = _mapper.Map<User>(result);
-                    token = _jwtGenerator.GenerateToken(user);
-                    authResult = _mapper.Map<AuthResult>((user, token));
-                }
-                else
-                {
-                    return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
-                }
+            var token = _jwtGenerator.GenerateToken(user.Value);
+            var authResult = _mapper.Map<AuthResult>((user.Value, token));
 
-            }
-            // else if (request.RoleType == 2)
-            // {
-            //     var command =  _mapper.Map<AddAdminCommand>(request);
-            //     var result =  await _mediator.Send(command);
-
-
-            // }
-            else
-            {
-                return Error.Failure();
-            }
-
-
-            // var token =   _jwtGenerator.GenerateToken(request);
-            // var authResult = _mapper.Map<AuthResult>((request,token));
 
             return authResult;
 

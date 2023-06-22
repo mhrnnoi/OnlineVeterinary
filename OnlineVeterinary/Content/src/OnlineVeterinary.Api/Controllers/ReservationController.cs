@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineVeterinary.Application.Reservations.Commands.Add;
 using OnlineVeterinary.Application.Reservations.Commands.AddCustom;
@@ -33,9 +35,11 @@ namespace OnlineVeterinary.Api.Controllers
         }
 
         [HttpGet]
+        // [Authorize]
         public async Task<ActionResult> GetReservationByIdAsync(Guid id)
         {
-
+            var clm = new Claim("registeredjwt","role");
+            HttpContext.User.HasClaim("slo","admin");
             var query = new GetReservationByIdQuery(id);
             var reservaionDto = await _mediatR.Send(query);
             return Ok(reservaionDto);

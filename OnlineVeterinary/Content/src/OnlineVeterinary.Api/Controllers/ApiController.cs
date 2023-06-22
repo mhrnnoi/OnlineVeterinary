@@ -15,6 +15,8 @@ namespace OnlineVeterinary.Api.Controllers
                 ErrorType.Validation => StatusCodes.Status400BadRequest,
                 ErrorType.Conflict => StatusCodes.Status409Conflict,
                 ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Unexpected => StatusCodes.Status406NotAcceptable,
+                ErrorType.Failure => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
             return Problem(statusCode : myStatusCode, title : firstError.Description);

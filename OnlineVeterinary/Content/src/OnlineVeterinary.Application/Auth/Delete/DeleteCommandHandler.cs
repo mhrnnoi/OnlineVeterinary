@@ -5,8 +5,12 @@ using System.Threading.Tasks;
 using ErrorOr;
 using MapsterMapper;
 using MediatR;
+using OnlineVeterinary.Application.Admins.Commands;
+using OnlineVeterinary.Application.Admins.Queries;
+using OnlineVeterinary.Application.Auth.Login;
 using OnlineVeterinary.Application.CareGivers.Commands.DeleteById;
 using OnlineVeterinary.Application.CareGivers.Queries.GetByEmail;
+using OnlineVeterinary.Application.Common.Interfaces;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Application.Common.Interfaces.Services;
 using OnlineVeterinary.Application.Doctors.Commands.DeleteById;
@@ -16,7 +20,7 @@ namespace OnlineVeterinary.Application.Auth.Delete
 {
     public class DeleteCommandHandler : IRequestHandler<DeleteCommand, ErrorOr <string>>
     {
-          private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
         private readonly IJwtGenerator _jwtGenerator;
@@ -30,71 +34,24 @@ namespace OnlineVeterinary.Application.Auth.Delete
         }
         public async Task<ErrorOr<string>> Handle(DeleteCommand request, CancellationToken cancellationToken)
         {
-            
-            Guid id;
-            ErrorOr<string> deleteResult;
-
-            
-            if (request.RoleType == 0)
-            {
-                var command = _mapper.Map<GetDoctorByEmailQuery>(request.Email);
-                var result = await _mediator.Send(command);
-                id = result.Value.Id;
-                if (result.IsError)
-                {
-                    return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
-
-                }
-                if (result.Value.Password == request.Password)
-                {
-                    var deleteCommand = new DeleteDoctorByIdCommand(id);
-                    deleteResult = await _mediator.Send(deleteCommand);
-                }
-                else
-                {
-                    return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
-                }
-
-
-            }
-            else if (request.RoleType == 1)
-            {
-                var command = _mapper.Map<GetCareGiverByEmailQuery>(request.Email);
-                var result = await _mediator.Send(command);
-                id = result.Value.Id;
-                if (result.IsError)
-                {
-                    return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
-
-                }
-                if (result.Value.Password == request.Password)
-                {
-                    var deleteCommand = new DeleteCareGiverByIdCommand(id);
-                    deleteResult = await _mediator.Send(deleteCommand);
-                }
-                else
-                {
-                    return Error.Validation(Error.Validation().Code, "Password or email is incorrect");
-                }
-
-            }
-            // else if (request.RoleType == 2)
-            // {
-            //     var command =  _mapper.Map<AddAdminCommand>(request);
-            //     var result =  await _mediator.Send(command);
-
-
-            // }
-            else
+            var loginCommand = _mapper.Map<LoginCommand>(request);
+            var loginResult = await _mediator.Send(loginCommand);
+            if (loginResult.IsError)
             {
                 return Error.Failure();
             }
-
-
-            // var token =   _jwtGenerator.GenerateToken(request);
-            // var authResult = _mapper.Map<AuthResult>((request,token));
+            var user = loginResult.Value;
+           
+            IRequest<ErrorOr<string>> deleteCommand = request.RoleType switch
+            {
+                0 =>  new DeleteDoctorByIdCommand(user.Id),
+                1 =>  new DeleteCareGiverByIdCommand(user.Id),
+                _ =>  new DeleteAdminByIdCommand(user.Id),
+            };
+            var deleteResult = await _mediator.Send(deleteCommand);
 
             return deleteResult;
+            
         }
     }
 }

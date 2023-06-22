@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 using ErrorOr;
 using MapsterMapper;
 using MediatR;
+using OnlineVeterinary.Application.Common.Interfaces;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Application.DTOs;
 using OnlineVeterinary.Domain.CareGivers.Entities;
 
 namespace OnlineVeterinary.Application.CareGivers.Queries.GetByEmail
 {
-    public class GetCareGiverByEmailQueryHandler : IRequestHandler<GetCareGiverByEmailQuery, ErrorOr<CareGiver>>
+    public class GetCareGiverByEmailQueryHandler : IRequestHandler<GetCareGiverByEmailQuery, ErrorOr<User>>
     {
 
        
@@ -25,10 +26,10 @@ namespace OnlineVeterinary.Application.CareGivers.Queries.GetByEmail
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public async Task<ErrorOr<CareGiver>> Handle(GetCareGiverByEmailQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<User>> Handle(GetCareGiverByEmailQuery request, CancellationToken cancellationToken)
         {
            var careGiver = await _careGiverRepository.GetByEmailAsync(request.email);
-           return _mapper.Map<CareGiver>(careGiver);
+           return _mapper.Map<User>(careGiver);
         }
     }
 }

@@ -20,49 +20,29 @@ namespace OnlineVeterinary.Application.Auth.Register
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<AuthResult>>
     {
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
         private readonly IJwtGenerator _jwtGenerator;
 
-        public RegisterCommandHandler(IMapper mapper, IUnitOfWork unitOfWork, IMediator mediator, IJwtGenerator jwtGenerator)
+        public RegisterCommandHandler(IMapper mapper, IMediator mediator, IJwtGenerator jwtGenerator)
         {
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
             _jwtGenerator = jwtGenerator;
         }
         public async Task<ErrorOr<AuthResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             
-            
-            if (request.RoleType == 0)
+            IRequest<ErrorOr<User>> command = request.RoleType  switch 
             {
-                var command =  _mapper.Map<AddDoctorCommand>(request);
-                await _mediator.Send(command);
+                0 => _mapper.Map<AddDoctorCommand>(request),
+                1 => _mapper.Map<AddCareGiverCommand>(request),
+                _ => _mapper.Map<AddAdminCommand>(request)
                 
-
-            }
-            else if (request.RoleType == 1)
-            {
-                var command =  _mapper.Map<AddCareGiverCommand>(request);
-                await _mediator.Send(command);
-           
-
-            }
-            else if (request.RoleType == 2)
-            {
-                var command =  _mapper.Map<AddAdminCommand>(request);
-                await _mediator.Send(command);
-          
-
-            }
-            else 
-            {
-                return Error.Failure();
-            }
+            };
             
-            var user =  _mapper.Map<User>(request);
-            var token =   _jwtGenerator.GenerateToken(user);
+            
+            var user =  await _mediator.Send(command);
+            var token =   _jwtGenerator.GenerateToken(user.Value);
             var authResult = _mapper.Map<AuthResult>((user,token));
 
             return authResult;

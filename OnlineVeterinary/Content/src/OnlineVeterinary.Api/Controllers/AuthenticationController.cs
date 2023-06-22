@@ -53,7 +53,46 @@ namespace OnlineVeterinary.Api.Controllers
 
             var result = await _mediatR.Send(command);
             
-            return result.Match(result => Ok("Login"),   errors => Problem(errors));
+            return result.Match(result => Ok(result),   errors => Problem(errors));
+
+
+
+        }
+        [HttpPut]
+        public async Task<IActionResult> ChangePasswordAsync([FromBody] LoginOrDeleteRequest request)
+        {
+
+            var command = _mapper.Map<DeleteCommand>(request);
+
+            var result = await _mediatR.Send(command);
+            
+            return result.Match(result => Ok(result),   errors => Problem(errors));
+
+
+
+        }
+        [HttpPut]
+        public async Task<IActionResult> ChangeEmailAsync([FromBody] LoginOrDeleteRequest request)
+        {
+
+            var command = _mapper.Map<DeleteCommand>(request);
+
+            var result = await _mediatR.Send(command);
+            
+            return result.Match(result => Ok(result),   errors => Problem(errors));
+
+
+
+        }
+        [HttpPut]
+        public async Task<IActionResult> LogOutAsync([FromBody] LoginOrDeleteRequest request)
+        {
+
+            var command = _mapper.Map<DeleteCommand>(request);
+
+            var result = await _mediatR.Send(command);
+            
+            return result.Match(result => Ok(result),   errors => Problem(errors));
 
 
 

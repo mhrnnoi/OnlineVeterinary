@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineVeterinary.Application.Pets.Commands.Add;
 using OnlineVeterinary.Application.Pets.Commands.Delete;
@@ -23,8 +25,10 @@ namespace OnlineVeterinary.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddPetAsync(AddPetRequest request)
         {
+            SignOut();
             var command = _mapper.Map<AddPetCommand>(request);
 
             var petDto = await _mediatR.Send(command);
