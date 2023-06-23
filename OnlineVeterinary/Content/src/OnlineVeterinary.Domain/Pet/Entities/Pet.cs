@@ -9,10 +9,11 @@ namespace OnlineVeterinary.Domain.Pet.Entities
     public class Pet
     {
         public Guid Id { get; set; }
-        public Guid CareGiverId { get; set; }
+        public string CareGiverId { get; set; } = null!;
         public string Name { get; set; } = string.Empty;
         public DateOnly DateOfBirth { get; set; }
-        public PetType PetType { get; set; }
+        public string PetType { get; set; } = string.Empty;
+        public string CareGiverName { get; set; } = string.Empty;
 
     }
 }

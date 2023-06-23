@@ -1,6 +1,6 @@
 namespace OnlineVeterinary.Domain.Role.Enums
 {
-    public enum RoleType
+    public enum RoleEnum
     {
         Doctor = 0,
         CareGiver,

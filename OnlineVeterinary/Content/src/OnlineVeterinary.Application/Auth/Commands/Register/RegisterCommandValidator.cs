@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation;
 
-namespace OnlineVeterinary.Application.Auth.Register
+namespace OnlineVeterinary.Application.Auth.Commands.Register
 {
     public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     {
         public RegisterCommandValidator()
         {
-            RuleFor(x=> x.RoleType).GreaterThanOrEqualTo(0).LessThanOrEqualTo(2);
+            RuleFor(x=> x.Role).GreaterThanOrEqualTo(0).LessThanOrEqualTo(2);
             RuleFor(x=> x.Email).EmailAddress().WithMessage("plz enter valid email");
             RuleFor(x=> x.Password).NotEmpty();
             RuleFor(x=> x.Password).MinimumLength(8);

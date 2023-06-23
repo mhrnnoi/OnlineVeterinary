@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation;
 
-namespace OnlineVeterinary.Application.Auth.Login
+namespace OnlineVeterinary.Application.Auth.Queries.Login
 {
     public class LoginCommandValidator : AbstractValidator<LoginCommand>
     {

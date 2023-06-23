@@ -1,17 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using OnlineVeterinary.Application.Auth.Common;
-using OnlineVeterinary.Application.Auth.Register;
 using OnlineVeterinary.Application.Common;
-using OnlineVeterinary.Application.Common.Interfaces;
 using OnlineVeterinary.Application.Common.Interfaces.Services;
+using OnlineVeterinary.Domain.Users.Entities;
 
 namespace OnlineVeterinary.Infrastructure.Services
 {
@@ -31,7 +25,8 @@ namespace OnlineVeterinary.Infrastructure.Services
             var mySigningCredentials =  new SigningCredentials(new SymmetricSecurityKey(key) , SecurityAlgorithms.HmacSha512);
             var myCliaims = new [] 
             {
-                new Claim(JwtRegisteredClaimNames.Sub, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub,Guid.NewGuid().ToString()),
+                new Claim("id",user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),

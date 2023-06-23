@@ -7,7 +7,7 @@ using OnlineVeterinary.Application.Pets.Commands.Add;
 using OnlineVeterinary.Application.Pets.Commands.Delete;
 using OnlineVeterinary.Application.Pets.Commands.Update;
 using OnlineVeterinary.Application.Pets.Queries.GetAll;
-using OnlineVeterinary.Application.Pets.Queries.GetCareGiver;
+// using OnlineVeterinary.Application.Pets.Queries.GetCareGiver;
 using OnlineVeterinary.Application.Pets.Queries.GetPet;
 using OnlineVeterinary.Contracts.Pets.Request;
 
@@ -24,17 +24,7 @@ namespace OnlineVeterinary.Api.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> AddPetAsync(AddPetRequest request)
-        {
-            SignOut();
-            var command = _mapper.Map<AddPetCommand>(request);
-
-            var petDto = await _mediatR.Send(command);
-            return Ok(petDto);
-
-        }
+        
         [HttpGet]
         public async Task<IActionResult> GetAllPetsAsync()
         {
@@ -52,14 +42,14 @@ namespace OnlineVeterinary.Api.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetCareGiverOfPetByIdAsync(Guid id)
-        {
-            var query = new GetCareGiverOfPetByIdQuery(id);
-            var careGiverDto = await _mediatR.Send(query);
-            return Ok(careGiverDto);
+        // [HttpGet]
+        // public async Task<IActionResult> GetCareGiverOfPetByIdAsync(Guid id)
+        // {
+        //     var query = new GetCareGiverOfPetByIdQuery(id);
+        //     var careGiverDto = await _mediatR.Send(query);
+        //     return Ok(careGiverDto);
 
-        }
+        // }
 
         [HttpPut]
         public async Task<IActionResult> UpdatePetAsync(UpdatePetRequest request)
@@ -71,14 +61,7 @@ namespace OnlineVeterinary.Api.Controllers
 
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeletePetByIdAsync(Guid id)
-        {
-            var command = new DeletePetByIdCommand(id);
-            var result = await _mediatR.Send(command);
-            return Ok(result);
-
-        }
+     
     }
 
 }

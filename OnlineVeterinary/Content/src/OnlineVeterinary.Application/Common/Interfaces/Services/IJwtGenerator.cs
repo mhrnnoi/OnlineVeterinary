@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using OnlineVeterinary.Application.Auth.Common;
-using OnlineVeterinary.Application.Auth.Register;
+using OnlineVeterinary.Domain.Users.Entities;
 
 namespace OnlineVeterinary.Application.Common.Interfaces.Services
 {

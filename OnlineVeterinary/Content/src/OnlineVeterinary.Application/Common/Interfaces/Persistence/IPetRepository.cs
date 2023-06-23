@@ -10,6 +10,6 @@ namespace OnlineVeterinary.Application.Common.Interfaces.Persistence
 {
     public interface IPetRepository : IGenericRepository<Pet>
     {
-        Task<CareGiver> GetCareGiverOfPet(Guid id);
+       
     }
 }

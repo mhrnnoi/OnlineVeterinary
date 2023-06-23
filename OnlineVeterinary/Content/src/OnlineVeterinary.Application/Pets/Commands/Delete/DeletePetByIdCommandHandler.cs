@@ -1,11 +1,12 @@
 using System;
+using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 
 namespace OnlineVeterinary.Application.Pets.Commands.Delete
 {
-    public class DeletePetByIdCommandHandler : IRequestHandler<DeletePetByIdCommand, string>
+    public class DeletePetByIdCommandHandler : IRequestHandler<DeletePetByIdCommand, ErrorOr<string>>
     {
         private readonly IPetRepository _petRepository;
         private readonly IMapper _mapper;
@@ -17,9 +18,15 @@ namespace OnlineVeterinary.Application.Pets.Commands.Delete
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public async Task<string> Handle(DeletePetByIdCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<string>> Handle(DeletePetByIdCommand request, CancellationToken cancellationToken)
         {
-            await _petRepository.DeleteAsync(request.Id);
+            var pet = await _petRepository.GetByIdAsync(request.Id);
+
+            if (pet is null || pet.CareGiverId == request.CareGiverId)
+            {
+                return Error.NotFound();
+            }
+            _petRepository.Remove(pet);
             await _unitOfWork.SaveChangesAsync();
             return "Deleted succesfuly";
         }

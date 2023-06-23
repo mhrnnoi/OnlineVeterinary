@@ -7,6 +7,7 @@ using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces;
 using OnlineVeterinary.Application.DTOs;
 using OnlineVeterinary.Domain.CareGivers.Entities;
+using OnlineVeterinary.Domain.Users.Entities;
 
 namespace OnlineVeterinary.Application.CareGivers.Queries.GetByEmail
 {

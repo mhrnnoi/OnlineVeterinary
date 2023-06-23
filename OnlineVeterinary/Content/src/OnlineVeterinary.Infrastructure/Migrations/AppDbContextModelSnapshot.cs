@@ -22,7 +22,7 @@ namespace OnlineVeterinary.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("OnlineVeterinary.Domain.CareGivers.Entities.CareGiver", b =>
+            modelBuilder.Entity("OnlineVeterinary.Domain.Users.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,98 +44,13 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("CareGivers");
-                });
-
-            modelBuilder.Entity("OnlineVeterinary.Domain.Doctor.Entities.Doctor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Doctors");
-                });
-
-            modelBuilder.Entity("OnlineVeterinary.Domain.Pet.Entities.Pet", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CareGiverId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("PetType")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Pets");
-                });
-
-            modelBuilder.Entity("OnlineVeterinary.Domain.Reservation.Entities.Reservation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CareGiverId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CareGiverLastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("DateOfReservation")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("DoctorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("DrLastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("PetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("PetName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly>("TimeOfReservation")
-                        .HasColumnType("time without time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Reservations");
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }

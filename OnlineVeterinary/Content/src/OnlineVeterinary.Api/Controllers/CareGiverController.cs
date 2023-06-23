@@ -1,13 +1,13 @@
+using System.IdentityModel.Tokens.Jwt;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OnlineVeterinary.Application.CareGivers.Commands.Add;
-using OnlineVeterinary.Application.CareGivers.Commands.DeleteById;
-using OnlineVeterinary.Application.CareGivers.Commands.Update;
-using OnlineVeterinary.Application.CareGivers.Queries.GetAll;
-using OnlineVeterinary.Application.CareGivers.Queries.GetById;
 using OnlineVeterinary.Application.CareGivers.Queries.GetPets;
-using OnlineVeterinary.Contracts.CareGivers.Request;
+using OnlineVeterinary.Application.Doctors.Queries.GetAll;
+using OnlineVeterinary.Application.Doctors.Queries.GetById;
+using OnlineVeterinary.Application.Pets.Commands.Add;
+using OnlineVeterinary.Application.Pets.Commands.Delete;
+using OnlineVeterinary.Contracts.Pets.Request;
 
 namespace OnlineVeterinary.Api.Controllers
 {
@@ -21,63 +21,69 @@ namespace OnlineVeterinary.Api.Controllers
             _mediatR = mediatR;
             _mapper = mapper;
         }
-        [HttpPost]
-        public async Task<IActionResult> AddCareGiverAsync([FromBody] AddCareGiverRequest request)
-        {
 
-            var command = _mapper.Map<AddCareGiverCommand>(request);
+        [HttpPost]
+        public async Task<IActionResult> AddPetAsync(AddPetRequest request)
+        {
+            var petInfo = _mapper.Map<AddPetCommand>((request));
+            var userId = GetUserId();
+            var userName = GetUserName();
+            var command = petInfo with { CareGiverId = userId, CareGiverName = userName };
 
             var result = await _mediatR.Send(command);
-            
-            return result.Match(result => CreatedAtAction("AddCareGiver", result),   errors => Problem(errors));
 
-
-
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetAllCareGiversAsync()
-        {
-            var query = new GetAllCareGiversQuery();
-            var careGiverDto = await _mediatR.Send(query);
-            return Ok(careGiverDto);
-
-        }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCareGiverByIdAsync(Guid id)
-        {
-            var query = new GetCareGiverByIdQuery(id);
-            var careGiverDto = await _mediatR.Send(query);
-            return Ok(careGiverDto);
+            return result.Match(result => Ok(result), errors => Problem(errors));
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPetsOfCareGiverByIdAsync(Guid id)
-        {
-            var query = new GetPetsOfCareGiverByIdQuery(id);
-            var petsDto = await _mediatR.Send(query);
-            return Ok(petsDto);
 
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateCareGiverAsync(UpdateCareGiverRequest request)
-        {
-            var command = _mapper.Map<UpdateCareGiverCommand>(request);
-
-            var careGiverDto = await _mediatR.Send(command);
-            return Ok(careGiverDto);
-
-        }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteCareGiverByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteMyPetByIdAsync(Guid id)
         {
-            var command = new DeleteCareGiverByIdCommand(id);
+            var userId = GetUserId();
+            var command = new DeletePetByIdCommand(id, userId);
             var result = await _mediatR.Send(command);
-            return Ok(result);
+            return result.Match(result => Ok(result), errors => Problem(errors));
 
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetDoctorByIdAsync(Guid id)
+        {
+            var query = new GetDoctorByIdQuery(id);
+            var result = await _mediatR.Send(query);
+            return result.Match(result => Ok(result), errors => Problem(errors));
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMyPetsAsync()
+        {
+            var userId = GetUserId();
+            var query = new GetPetsOfCareGiverByIdQuery(userId);
+            var result = await _mediatR.Send(query);
+            return result.Match(result => Ok(result), errors => Problem(errors));
+
+        }
+    
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllDoctorsAsync()
+        {
+            var query = new GetAllDoctorsQuery();
+            var result = await _mediatR.Send(query);
+            return result.Match(result => Ok(result), errors => Problem(errors));
+
+        }
+
+
+
+
+
+
+
 
 
     }

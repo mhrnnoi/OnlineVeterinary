@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
@@ -10,7 +7,7 @@ using OnlineVeterinary.Domain.Pet.Entities;
 
 namespace OnlineVeterinary.Application.Pets.Commands.Add
 {
-    public class AddPetCommandHandler : IRequestHandler<AddPetCommand, PetDTO>
+    public class AddPetCommandHandler : IRequestHandler<AddPetCommand, ErrorOr<string>>
     {
         private readonly IPetRepository _petRepository;
         private readonly IMapper _mapper;
@@ -22,12 +19,13 @@ namespace OnlineVeterinary.Application.Pets.Commands.Add
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public async Task<PetDTO> Handle(AddPetCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<string>> Handle(AddPetCommand request, CancellationToken cancellationToken)
         {
-            var pet = _mapper.Map<Pet>(request);
-            await _petRepository.AddAsync(pet);
+            var pet =  _mapper.Map<Pet>(request);
+            
+            _petRepository.Add(pet);
             await _unitOfWork.SaveChangesAsync();
-            return _mapper.Map<PetDTO>(pet);
+            return "pet Added succesfuly";
         }
     }
 }

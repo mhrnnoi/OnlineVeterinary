@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ErrorOr;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces;
+using OnlineVeterinary.Domain.Users.Entities;
 
 namespace OnlineVeterinary.Application.Admin.Commands
 {

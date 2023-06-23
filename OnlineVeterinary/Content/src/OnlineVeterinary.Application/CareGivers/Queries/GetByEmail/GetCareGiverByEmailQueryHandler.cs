@@ -1,35 +1,35 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ErrorOr;
-using MapsterMapper;
-using MediatR;
-using OnlineVeterinary.Application.Common.Interfaces;
-using OnlineVeterinary.Application.Common.Interfaces.Persistence;
-using OnlineVeterinary.Application.DTOs;
-using OnlineVeterinary.Domain.CareGivers.Entities;
+// using System;
+// using System.Collections.Generic;
+// using System.Linq;
+// using System.Threading.Tasks;
+// using ErrorOr;
+// using MapsterMapper;
+// using MediatR;
+// using OnlineVeterinary.Application.Common.Interfaces;
+// using OnlineVeterinary.Application.Common.Interfaces.Persistence;
+// using OnlineVeterinary.Application.DTOs;
+// using OnlineVeterinary.Domain.CareGivers.Entities;
 
-namespace OnlineVeterinary.Application.CareGivers.Queries.GetByEmail
-{
-    public class GetCareGiverByEmailQueryHandler : IRequestHandler<GetCareGiverByEmailQuery, ErrorOr<User>>
-    {
+// namespace OnlineVeterinary.Application.CareGivers.Queries.GetByEmail
+// {
+//     public class GetCareGiverByEmailQueryHandler : IRequestHandler<GetCareGiverByEmailQuery, ErrorOr<User>>
+//     {
 
        
-        private readonly ICareGiverRepository _careGiverRepository;
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
+//         private readonly ICareGiverRepository _careGiverRepository;
+//         private readonly IMapper _mapper;
+//         private readonly IUnitOfWork _unitOfWork;
 
-        public GetCareGiverByEmailQueryHandler(ICareGiverRepository careGiverRepository, IMapper mapper, IUnitOfWork unitOfWork)
-        {
-            _careGiverRepository = careGiverRepository;
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
-        }
-        public async Task<ErrorOr<User>> Handle(GetCareGiverByEmailQuery request, CancellationToken cancellationToken)
-        {
-           var careGiver = await _careGiverRepository.GetByEmailAsync(request.email);
-           return _mapper.Map<User>(careGiver);
-        }
-    }
-}
+//         public GetCareGiverByEmailQueryHandler(ICareGiverRepository careGiverRepository, IMapper mapper, IUnitOfWork unitOfWork)
+//         {
+//             _careGiverRepository = careGiverRepository;
+//             _mapper = mapper;
+//             _unitOfWork = unitOfWork;
+//         }
+//         public async Task<ErrorOr<User>> Handle(GetCareGiverByEmailQuery request, CancellationToken cancellationToken)
+//         {
+//            var careGiver = await _careGiverRepository.GetByEmailAsync(request.email);
+//            return _mapper.Map<User>(careGiver);
+//         }
+//     }
+// }

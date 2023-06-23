@@ -26,7 +26,6 @@ namespace OnlineVeterinary.Application.Behaviors
                 return await next();
             }
             await _unitOfWork.DisposeAsync();
-            var errors =  string.Join(",\n", result.Errors.ToList());
             //this dynamic i use , is for simplcity i know dynamic is dangerous :)
             return (dynamic)Error.Validation(result.Errors.First().PropertyName,result.Errors.First().ErrorMessage );
 
