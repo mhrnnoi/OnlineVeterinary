@@ -7,6 +7,6 @@ namespace OnlineVeterinary.Application.Common.Interfaces.Services
 {
     public interface IDateTimeProvider
     {
-        DateTime Utc {get;}
+        DateTime UtcNow {get;}
     }
 }

@@ -8,6 +8,6 @@ namespace OnlineVeterinary.Infrastructure.Services
 {
     public class DatetimeProvider : IDateTimeProvider
     {
-        public DateTime Utc => DateTime.UtcNow;
+        public DateTime UtcNow => DateTime.UtcNow;
     }
 }

@@ -33,7 +33,7 @@ namespace OnlineVeterinary.Infrastructure.Services
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
-            var securityToken =  new JwtSecurityToken(claims : myCliaims, audience: _jwtOptions.Audience, signingCredentials : mySigningCredentials, expires : _dateTimeProvider.Utc.AddMinutes(_jwtOptions.ExpiryMinutes));
+            var securityToken =  new JwtSecurityToken(claims : myCliaims, audience: _jwtOptions.Audience, signingCredentials : mySigningCredentials, expires : _dateTimeProvider.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes));
             var handler =  new  JwtSecurityTokenHandler();
             return new Jwt(handler.WriteToken(securityToken));
         }

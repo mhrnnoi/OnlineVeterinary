@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OnlineVeterinary.Domain.Reservation.Entities
+namespace OnlineVeterinary.Application.Features.Common
 {
-    public class Reservation
+    public class ReservationDTO
     {
         public Guid Id { get; set; }
-        public Guid DoctorId { get; set; }
-        public Guid PetId { get; set; } 
-        public Guid CareGiverId { get; set;}
         public DateTime DateOfReservation { get; set; }
         public string DrLastName { get; set; } = string.Empty;
         public string PetName { get; set; } = string.Empty;

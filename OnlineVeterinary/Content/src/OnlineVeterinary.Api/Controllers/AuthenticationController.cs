@@ -2,11 +2,11 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineVeterinary.Application.Auth.Commands.ChangeEmail;
-using OnlineVeterinary.Application.Auth.Commands.ChangePassword;
-using OnlineVeterinary.Application.Auth.Commands.Delete;
-using OnlineVeterinary.Application.Auth.Commands.Register;
-using OnlineVeterinary.Application.Auth.Queries.Login;
+using OnlineVeterinary.Application.Features.Auth.Commands.ChangeEmail;
+using OnlineVeterinary.Application.Features.Auth.Commands.ChangePassword;
+using OnlineVeterinary.Application.Features.Auth.Commands.Delete;
+using OnlineVeterinary.Application.Features.Auth.Commands.Register;
+using OnlineVeterinary.Application.Features.Auth.Queries.Login;
 using OnlineVeterinary.Contracts.Authentication.Request;
 
 namespace OnlineVeterinary.Api.Controllers
@@ -53,7 +53,7 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteMyAccountAsync()
         {
-            string userId = GetUserId();
+            string userId = GetUserId(User.Claims);
 
             var command = new DeleteMyAccountCommand(userId);
             var result = await _mediatR.Send(command);
@@ -70,7 +70,7 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordRequest request)
         {
-            string userId = GetUserId();
+            string userId = GetUserId(User.Claims);
 
             var command = new ChangePasswordCommand( Id : userId, NewPassword : request.NewPassword);
 
@@ -84,7 +84,7 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> ChangeEmailAsync([FromBody] ChangeEmailRequest request)
         {
-            string userId = GetUserId();
+            string userId = GetUserId(User.Claims);
 
             var command = new ChangeEmailCommand(request.NewEmail, userId);
 

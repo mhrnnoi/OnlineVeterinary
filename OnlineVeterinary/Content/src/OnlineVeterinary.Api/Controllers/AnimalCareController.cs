@@ -1,11 +1,11 @@
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OnlineVeterinary.Application.CareGivers.Queries.GetPets;
-using OnlineVeterinary.Application.Doctors.Queries.GetAll;
-using OnlineVeterinary.Application.Doctors.Queries.GetById;
-using OnlineVeterinary.Application.Pets.Commands.Add;
-using OnlineVeterinary.Application.Pets.Commands.Delete;
+using OnlineVeterinary.Application.Features.CareGivers.Queries.GetPets;
+using OnlineVeterinary.Application.Features.Doctors.Queries.GetAll;
+using OnlineVeterinary.Application.Features.Doctors.Queries.GetById;
+using OnlineVeterinary.Application.Features.Pets.Commands.Add;
+using OnlineVeterinary.Application.Features.Pets.Commands.Delete;
 using OnlineVeterinary.Contracts.Pets.Request;
 
 namespace OnlineVeterinary.Api.Controllers
@@ -25,9 +25,9 @@ namespace OnlineVeterinary.Api.Controllers
         public async Task<IActionResult> AddPetAsync(AddPetRequest request)
         {
             var petInfo = _mapper.Map<AddPetCommand>((request));
-            var userId = GetUserId();
-            var userName = GetUserName();
-            var command = petInfo with { CareGiverId = userId, CareGiverName = userName };
+            var userId = GetUserId(User.Claims);
+            var userFamilyName = GetUserFamilyName(User.Claims);
+            var command = petInfo with { CareGiverId = userId, CareGiverName = userFamilyName };
 
             var result = await _mediatR.Send(command);
 
@@ -40,7 +40,7 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteMyPetByIdAsync(Guid id)
         {
-            var userId = GetUserId();
+            var userId = GetUserId(User.Claims);
             var command = new DeletePetByIdCommand(id, userId);
             var result = await _mediatR.Send(command);
             return result.Match(result => Ok(result), errors => Problem(errors));
@@ -60,8 +60,8 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyPetsAsync()
         {
-            var userId = GetUserId();
-            var query = new GetPetsOfCareGiverByIdQuery(userId);
+            var userId = GetUserId(User.Claims);
+            var query = new GetMyPetsQuery(userId);
             var result = await _mediatR.Send(query);
             return result.Match(result => Ok(result), errors => Problem(errors));
 

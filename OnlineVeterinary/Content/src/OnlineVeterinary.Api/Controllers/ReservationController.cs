@@ -3,12 +3,9 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineVeterinary.Application.Reservations.Commands.Add;
-using OnlineVeterinary.Application.Reservations.Commands.AddCustom;
-using OnlineVeterinary.Application.Reservations.Commands.DeleteById;
-using OnlineVeterinary.Application.Reservations.Commands.Update;
-using OnlineVeterinary.Application.Reservations.Queries.GetById;
-using OnlineVeterinary.Application.ReservedTimes.Queries.GetAll;
+using OnlineVeterinary.Application.Features.Reservations.Commands.Add;
+using OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById;
+using OnlineVeterinary.Application.Features.ReservedTimes.Queries.GetAll;
 using OnlineVeterinary.Contracts.Reservations.Entities;
 using OnlineVeterinary.Contracts.Reservations.Request;
 
@@ -28,37 +25,39 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyAllReservationsAsync()
         {
-            var userId = GetUserId();
-            var userRole =  GetUserRole();
+            var userId = GetUserId(User.Claims);
+            var userRole = GetUserRole(User.Claims);
             var query = new GetAllReservationsQuery(userId, userRole);
             var result = await _mediatR.Send(query);
             return result.Match(result => Ok(result), errors => Problem(errors));
 
         }
 
-       
+
 
 
         [HttpPost]
         public async Task<IActionResult> AddReservationAsync(AddReservationRequest request)
         {
-            var userId = GetUserId();
+            var userId = GetUserId(User.Claims);
             var command = new AddReservationCommand(request.PetId, request.DoctorId, userId);
 
             var result = await _mediatR.Send(command);
             return result.Match(result => Ok(result), errors => Problem(errors));
 
         }
-        
+
         [HttpDelete]
         public async Task<IActionResult> DeleteMyReservationByIdAsync(Guid id)
         {
-            var command = new DeleteReservationByIdCommand(id);
+            var userId = GetUserId(User.Claims);
+
+            var command = new DeleteReservationByIdCommand(id, userId);
 
             var result = await _mediatR.Send(command);
             return Ok(result);
         }
-      
+
 
 
 

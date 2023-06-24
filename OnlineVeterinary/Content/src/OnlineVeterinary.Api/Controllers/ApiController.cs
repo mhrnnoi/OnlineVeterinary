@@ -11,18 +11,19 @@ namespace OnlineVeterinary.Api.Controllers
     [Authorize]
     public class ApiController : ControllerBase
     {
-        protected string GetUserId()
+        protected string GetUserId(IEnumerable<Claim> claims)
         {
             //i set user id to sub 
-            return User.Claims.Single(a=> a.Type.ToLower() == "id").Value;
+            
+            return claims.Single(a=> a.Type.ToLower() == "id").Value;
         }
-        protected string GetUserFamilyName()
+        protected string GetUserFamilyName(IEnumerable<Claim> claims)
         {
-            return  User.Claims.First(a => a.Type == JwtRegisteredClaimNames.FamilyName).Value;
+            return  claims.First(a => a.Type == JwtRegisteredClaimNames.FamilyName).Value;
         }
-        protected string GetUserRole()
+        protected string GetUserRole(IEnumerable<Claim> claims)
         {
-            return User.Claims.First(a => a.Type == ClaimTypes.Role).Value;
+            return claims.First(a => a.Type == ClaimTypes.Role).Value;
         }
 
         [AllowAnonymous]
