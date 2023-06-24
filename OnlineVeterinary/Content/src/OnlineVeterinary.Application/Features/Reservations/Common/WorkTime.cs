@@ -1,4 +1,3 @@
-using System;
 
 namespace OnlineVeterinary.Application.Features.Common
 {

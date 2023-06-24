@@ -24,14 +24,16 @@ namespace OnlineVeterinary.Infrastructure
 
             // services.Configure<DbSettings>(configurationManager.GetSection(DbSettings.SectionName));
             services.AddScoped<IUserRepository, UserRepository>();
-            // services.AddScoped<IPetRepository, PetRepository>();
-            // services.AddScoped<IDoctorRepository, DoctorRepository>();
-            // services.AddScoped<IReservationRepository, ReservationRepository>();
+            services.AddScoped<IPetRepository, PetRepository>();
+            services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
+
+
             var jwtSettings = new JwtSettings();
             configurationManager.Bind(JwtSettings.SectionName, jwtSettings);
             services.AddSingleton(Options.Create(jwtSettings));
+
             var dbSettings = new DbSettings();
             configurationManager.Bind(DbSettings.SectionName, dbSettings);
             services.AddSingleton(Options.Create(dbSettings));
@@ -52,7 +54,7 @@ namespace OnlineVeterinary.Infrastructure
                 };
             });
             services.AddScoped<IDateTimeProvider, DatetimeProvider>();
-            services.AddDbContext<AppDbContext>(options => 
+            services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseNpgsql("Server=127.0.0.1; Port =5432; User Id = postgres; password = Mehran123; database = OnlineVeterinary");
             });

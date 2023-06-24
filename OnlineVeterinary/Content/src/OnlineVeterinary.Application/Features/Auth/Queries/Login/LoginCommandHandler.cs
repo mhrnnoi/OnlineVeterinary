@@ -14,14 +14,19 @@ namespace OnlineVeterinary.Application.Features.Auth.Queries.Login
         private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtGenerator _jwtGenerator;
 
-        public LoginCommandHandler(IUserRepository userRepository, IMapper mapper, IUnitOfWork unitOfWork, IMediator mediator, IJwtGenerator jwtGenerator)
+        public LoginCommandHandler(
+                                    IUserRepository userRepository,
+                                    IMapper mapper,
+                                    IUnitOfWork unitOfWork,
+                                    IJwtGenerator jwtGenerator)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _jwtGenerator = jwtGenerator;
         }
-        public async Task<ErrorOr<AuthResult>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<AuthResult>> Handle(LoginCommand request,
+                                                      CancellationToken cancellationToken)
         {
 
 
@@ -29,12 +34,14 @@ namespace OnlineVeterinary.Application.Features.Auth.Queries.Login
 
             if (user == null || user.Password != request.Password)
             {
-                return Error.Failure(Error.Failure().Code, "email or password incorrect");
+                return Error.Failure(Error.Failure().Code,
+                                     "email or password incorrect");
             }
 
             
             var token = _jwtGenerator.GenerateToken(user);
-            var authResult = _mapper.Map<AuthResult>((user, token));
+            var mapUser = _mapper.Map<AuthResult>(user);
+            var authResult = mapUser with { Token = token };
 
 
             return authResult;

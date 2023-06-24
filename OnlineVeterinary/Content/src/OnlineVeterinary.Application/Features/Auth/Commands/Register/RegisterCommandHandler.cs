@@ -16,21 +16,26 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.Register
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public RegisterCommandHandler(IUserRepository userRepository, IMapper mapper, IJwtGenerator jwtGenerator, IUnitOfWork unitOfWork)
+        public RegisterCommandHandler(IUserRepository userRepository,
+                                      IMapper mapper,
+                                      IJwtGenerator jwtGenerator,
+                                      IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _jwtGenerator = jwtGenerator;
             _unitOfWork = unitOfWork;
         }
-        public async Task<ErrorOr<AuthResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<AuthResult>> Handle(RegisterCommand request,
+                                                      CancellationToken cancellationToken)
         {
             var user = _mapper.Map<User>(request);
             _userRepository.Add(user);
             await _unitOfWork.SaveChangesAsync();
 
             var token = _jwtGenerator.GenerateToken(user);
-            var authResult = _mapper.Map<AuthResult>((user, token));
+            var mapUser = _mapper.Map<AuthResult>(user);
+            var authResult = mapUser with { Token = token };
 
             return authResult;
 

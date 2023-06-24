@@ -1,4 +1,3 @@
-using System;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Infrastructure.Persistence.DataContext;
 

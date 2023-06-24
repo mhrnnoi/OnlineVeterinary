@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineVeterinary.Application.Features.Reservations.Commands.Add;
 using OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById;
 using OnlineVeterinary.Application.Features.ReservedTimes.Queries.GetAll;
-using OnlineVeterinary.Contracts.Reservations.Entities;
 using OnlineVeterinary.Contracts.Reservations.Request;
 
 namespace OnlineVeterinary.Api.Controllers
@@ -29,7 +28,8 @@ namespace OnlineVeterinary.Api.Controllers
             var userRole = GetUserRole(User.Claims);
             var query = new GetAllReservationsQuery(userId, userRole);
             var result = await _mediatR.Send(query);
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
         }
 
@@ -40,10 +40,12 @@ namespace OnlineVeterinary.Api.Controllers
         public async Task<IActionResult> AddReservationAsync(AddReservationRequest request)
         {
             var userId = GetUserId(User.Claims);
-            var command = new AddReservationCommand(request.PetId, request.DoctorId, userId);
+            var command = new AddReservationCommand(request.PetId,
+                                                     request.DoctorId, userId);
 
             var result = await _mediatR.Send(command);
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
         }
 
@@ -51,11 +53,12 @@ namespace OnlineVeterinary.Api.Controllers
         public async Task<IActionResult> DeleteMyReservationByIdAsync(Guid id)
         {
             var userId = GetUserId(User.Claims);
-
-            var command = new DeleteReservationByIdCommand(id, userId);
+            var userRole = GetUserRole(User.Claims);
+            var command = new DeleteReservationByIdCommand(id, userId, userRole);
 
             var result = await _mediatR.Send(command);
-            return Ok(result);
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
         }
 
 

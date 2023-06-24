@@ -1,5 +1,4 @@
 using ErrorOr;
-using System.Linq;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
@@ -14,13 +13,18 @@ namespace OnlineVeterinary.Application.Features.CareGivers.Queries.GetPets
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public GetMyPetsQueryHandler(IPetRepository petRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public GetMyPetsQueryHandler(
+                                    IPetRepository petRepository,
+                                    IMapper mapper,
+                                    IUnitOfWork unitOfWork)
         {
             _petRepository = petRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public async Task<ErrorOr<List<PetDTO>>> Handle(GetMyPetsQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<List<PetDTO>>> Handle(
+                                    GetMyPetsQuery request,
+                                    CancellationToken cancellationToken)
         {
             var pets = await _petRepository.GetAllAsync();
             var myGuidId = StringToGuidConverter.ConvertToGuid(request.Id);
@@ -29,7 +33,7 @@ namespace OnlineVeterinary.Application.Features.CareGivers.Queries.GetPets
             {
                 return Error.NotFound();
             }
-            var petsDTO = _mapper.Map<ErrorOr<List<PetDTO>>>(myPets);
+            var petsDTO = _mapper.Map<List<PetDTO>>(myPets);
             return petsDTO;
         }
     }

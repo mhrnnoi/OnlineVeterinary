@@ -19,11 +19,14 @@ namespace OnlineVeterinary.Infrastructure.Services
             _jwtOptions = jwtOptions.Value;
             _dateTimeProvider = dateTimeProvider;
         }
-        public Jwt GenerateToken(User user)
+        public string GenerateToken(User user)
         {
             var key = Encoding.UTF8.GetBytes(_jwtOptions.Secret);
-            var mySigningCredentials =  new SigningCredentials(new SymmetricSecurityKey(key) , SecurityAlgorithms.HmacSha512);
-            var myCliaims = new [] 
+            var mySigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                                                               SecurityAlgorithms.HmacSha512);
+
+
+            var myCliaims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub,Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Role,user.Role),
@@ -33,9 +36,15 @@ namespace OnlineVeterinary.Infrastructure.Services
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
-            var securityToken =  new JwtSecurityToken(claims : myCliaims, audience: _jwtOptions.Audience, signingCredentials : mySigningCredentials, expires : _dateTimeProvider.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes));
-            var handler =  new  JwtSecurityTokenHandler();
-            return new Jwt(handler.WriteToken(securityToken));
+            
+            var securityToken = new JwtSecurityToken(claims: myCliaims,
+                                                     audience: _jwtOptions.Audience,
+                                                     signingCredentials: mySigningCredentials,
+                                                     expires: _dateTimeProvider.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes));
+
+
+            var handler = new JwtSecurityTokenHandler();
+            return handler.WriteToken(securityToken);
         }
     }
 }

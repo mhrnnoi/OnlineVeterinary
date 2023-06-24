@@ -27,11 +27,16 @@ namespace OnlineVeterinary.Api.Controllers
             var petInfo = _mapper.Map<AddPetCommand>((request));
             var userId = GetUserId(User.Claims);
             var userFamilyName = GetUserFamilyName(User.Claims);
-            var command = petInfo with { CareGiverId = userId, CareGiverName = userFamilyName };
+            var command = petInfo with
+            {
+                CareGiverId = Guid.Parse(userId),
+                CareGiverLastName = userFamilyName
+            };
 
             var result = await _mediatR.Send(command);
 
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
         }
 
@@ -43,7 +48,8 @@ namespace OnlineVeterinary.Api.Controllers
             var userId = GetUserId(User.Claims);
             var command = new DeletePetByIdCommand(id, userId);
             var result = await _mediatR.Send(command);
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
         }
 
@@ -53,7 +59,8 @@ namespace OnlineVeterinary.Api.Controllers
         {
             var query = new GetDoctorByIdQuery(id);
             var result = await _mediatR.Send(query);
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
         }
 
@@ -63,24 +70,21 @@ namespace OnlineVeterinary.Api.Controllers
             var userId = GetUserId(User.Claims);
             var query = new GetMyPetsQuery(userId);
             var result = await _mediatR.Send(query);
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
         }
-    
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllDoctorsAsync()
         {
             var query = new GetAllDoctorsQuery();
             var result = await _mediatR.Send(query);
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
         }
-
-
-
-
-
 
 
 

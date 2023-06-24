@@ -6,6 +6,9 @@ using OnlineVeterinary.Application.Features.Common;
 
 namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
 {
-    public record AddReservationCommand(Guid PetId, Guid DoctorId, string CareGiverId) : IRequest<ErrorOr<ReservationDTO>>;
+    public record AddReservationCommand(
+                    Guid PetId,
+                    Guid DoctorId,
+                    string CareGiverId) : IRequest<ErrorOr<ReservationDTO>>;
 
 }

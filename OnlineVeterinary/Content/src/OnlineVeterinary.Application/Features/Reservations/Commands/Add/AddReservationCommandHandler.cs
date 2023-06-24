@@ -5,39 +5,53 @@ using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Application.Common.Interfaces.Services;
 using OnlineVeterinary.Application.Common.Services;
 using OnlineVeterinary.Application.Features.Common;
-using OnlineVeterinary.Domain.Doctor.Entities;
 using OnlineVeterinary.Domain.Pet.Entities;
 using OnlineVeterinary.Domain.Reservation.Entities;
+using OnlineVeterinary.Domain.Users.Entities;
 
 namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
 {
     public class AddReservationCommandHandler : IRequestHandler<AddReservationCommand, ErrorOr<ReservationDTO>>
     {
         private readonly IReservationRepository _reservationRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IDoctorRepository _doctorRepository;
         private readonly IPetRepository _petRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        public AddReservationCommandHandler(IReservationRepository reservationRepository, IMapper mapper, IUnitOfWork unitOfWork, IDoctorRepository doctorRepository, IPetRepository petRepository, IDateTimeProvider dateTimeProvider)
+        public AddReservationCommandHandler(
+                                    IReservationRepository reservationRepository,
+                                    IMapper mapper,
+                                    IUnitOfWork unitOfWork,
+                                    IPetRepository petRepository,
+                                    IDateTimeProvider dateTimeProvider,
+                                    IUserRepository userRepository)
         {
             _reservationRepository = reservationRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _doctorRepository = doctorRepository;
             _petRepository = petRepository;
             _dateTimeProvider = dateTimeProvider;
+            _userRepository = userRepository;
         }
-        public async Task<ErrorOr<ReservationDTO>> Handle(AddReservationCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<ReservationDTO>> Handle(
+                                            AddReservationCommand request,
+                                            CancellationToken cancellationToken)
         {
-            var doctor = await _doctorRepository.GetByIdAsync(request.DoctorId);
+            var users = await _userRepository.GetAllAsync();
+            var doctors = users.Where(a => a.Role.ToLower() == "doctor");
+            var doctor = doctors.SingleOrDefault(a => a.Id == request.DoctorId);
             var pet = await _petRepository.GetByIdAsync(request.PetId);
             var myGuidId = StringToGuidConverter.ConvertToGuid(request.CareGiverId);
             Reservation reservation;
 
-            
-            if (doctor is null || pet is null || pet.CareGiverId != myGuidId)
+
+            if (doctor is null || pet is null)
+            {
+                return Error.NotFound();
+            }
+            if (pet.CareGiverId != myGuidId)
             {
                 return Error.NotFound();
             }
@@ -52,18 +66,29 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
             if (IsInWorkingHours(reserveDate.TimeOfDay))
             {
                 reservation = FormReservation(doctor, pet, myGuidId, reserveDate);
+                _reservationRepository.Add(reservation);
+                await _unitOfWork.SaveChangesAsync();
                 return _mapper.Map<ReservationDTO>(reservation);
             }
 
-            reserveDate = new DateTime(reserveDate.Year, reserveDate.Month, reserveDate.Day + 1, 07, 0, 0);
+            reserveDate = new DateTime(
+                                reserveDate.Year,
+                                reserveDate.Month,
+                                reserveDate.Day + 1,
+                                07, 0, 0);
             reservation = FormReservation(doctor, pet, myGuidId, reserveDate);
-
+            _reservationRepository.Add(reservation);
+            await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<ReservationDTO>(reservation);
 
 
         }
 
-        private static Reservation FormReservation(Doctor doctor, Pet pet, Guid myGuidId, DateTime reserveDate)
+        private static Reservation FormReservation(
+            User doctor,
+            Pet pet,
+            Guid myGuidId,
+            DateTime reserveDate)
         {
             return new Reservation()
 

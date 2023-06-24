@@ -3,6 +3,12 @@ using OnlineVeterinary.Domain.Pet.Enums;
 
 namespace OnlineVeterinary.Application.Features.DTOs
 {
-    public record PetDTO(Guid Id, string CareGiverId, string Name, DateOnly DateOfBirth, string PetType, string CareGiverName);
+    public record PetDTO(
+        Guid Id,
+        Guid CareGiverId,
+        string Name,
+        DateTime DateOfBirth,
+        string PetType,
+        string CareGiverLastName);
     
 }

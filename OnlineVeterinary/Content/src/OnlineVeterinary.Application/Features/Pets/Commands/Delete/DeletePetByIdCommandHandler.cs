@@ -13,13 +13,18 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public DeletePetByIdCommandHandler(IPetRepository petRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public DeletePetByIdCommandHandler(
+                                IPetRepository petRepository,
+                                IMapper mapper,
+                                IUnitOfWork unitOfWork)
         {
             _petRepository = petRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public async Task<ErrorOr<string>> Handle(DeletePetByIdCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<string>> Handle(
+                                        DeletePetByIdCommand request,
+                                        CancellationToken cancellationToken)
         {
             var pet = await _petRepository.GetByIdAsync(request.Id);
             var myGuidId = StringToGuidConverter.ConvertToGuid(request.CareGiverId);

@@ -2,7 +2,7 @@ namespace OnlineVeterinary.Domain.Pet.Enums
 {
     public enum PetType
     {
-        Cat,
+        Cat = 0,
         Dog
     }
 }

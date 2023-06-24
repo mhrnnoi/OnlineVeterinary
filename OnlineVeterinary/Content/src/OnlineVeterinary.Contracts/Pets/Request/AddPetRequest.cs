@@ -5,9 +5,9 @@
 
 namespace OnlineVeterinary.Contracts.Pets.Request
 {
-    public record AddPetRequest(string Name,    
-        DateOnly DateOfBirth,
-        int PetType);
+    public record AddPetRequest(string Name,
+                                DateTime DateOfBirth,
+                                int PetType);
 
 
 }

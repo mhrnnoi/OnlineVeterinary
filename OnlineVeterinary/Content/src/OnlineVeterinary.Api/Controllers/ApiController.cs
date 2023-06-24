@@ -13,25 +13,27 @@ namespace OnlineVeterinary.Api.Controllers
     {
         protected string GetUserId(IEnumerable<Claim> claims)
         {
-            //i set user id to sub 
-            
-            return claims.Single(a=> a.Type.ToLower() == "id").Value;
+
+            return claims.Single(a => a.Type.ToLower() == "id")
+                                                    .Value;
         }
         protected string GetUserFamilyName(IEnumerable<Claim> claims)
         {
-            return  claims.First(a => a.Type == JwtRegisteredClaimNames.FamilyName).Value;
+            return claims.First(a => a.Type == ClaimTypes.Surname)
+                                                                            .Value;
         }
         protected string GetUserRole(IEnumerable<Claim> claims)
         {
-            return claims.First(a => a.Type == ClaimTypes.Role).Value;
+            return claims.First(a => a.Type == ClaimTypes.Role)
+                                                        .Value;
         }
 
         [AllowAnonymous]
         protected IActionResult Problem(List<Error> errors)
         {
             var firstError = errors.First();
-            
-            var myStatusCode =  firstError.Type switch
+
+            var myStatusCode = firstError.Type switch
             {
                 ErrorType.Validation => StatusCodes.Status400BadRequest,
                 ErrorType.Conflict => StatusCodes.Status409Conflict,
@@ -40,8 +42,9 @@ namespace OnlineVeterinary.Api.Controllers
                 ErrorType.Failure => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
-            return Problem(statusCode : myStatusCode, title : firstError.Description);
+            return Problem(statusCode: myStatusCode,
+                             title: firstError.Description);
         }
-       
+
     }
 }

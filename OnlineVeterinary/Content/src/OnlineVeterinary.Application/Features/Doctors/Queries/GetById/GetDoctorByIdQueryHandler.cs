@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ErrorOr;
 using MapsterMapper;
 using MediatR;
@@ -12,25 +8,23 @@ namespace OnlineVeterinary.Application.Features.Doctors.Queries.GetById
 {
     public class GetDoctorByIdQueryHandler : IRequestHandler<GetDoctorByIdQuery, ErrorOr<DoctorDTO>>
     {
-        private readonly IDoctorRepository _doctorRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public GetDoctorByIdQueryHandler(IDoctorRepository doctorRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public GetDoctorByIdQueryHandler(IUserRepository userRepository, IMapper mapper)
         {
-            _doctorRepository = doctorRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
         }
         public async Task<ErrorOr<DoctorDTO>> Handle(GetDoctorByIdQuery request, CancellationToken cancellationToken)
         {
-            var doctor = await _doctorRepository.GetByIdAsync(request.Id);
-            if (doctor is null)
+            var user = await _userRepository.GetByIdAsync(request.Id);
+            if (user is null || user.Role.ToLower() != "doctor")
             {
                 return Error.NotFound();
             }
 
-            return _mapper.Map<ErrorOr<DoctorDTO>>(doctor);
+            return _mapper.Map<DoctorDTO>(user);
         }
     }
 }

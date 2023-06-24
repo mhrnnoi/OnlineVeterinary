@@ -2,7 +2,6 @@ using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
-using OnlineVeterinary.Application.Common.Interfaces.Services;
 using OnlineVeterinary.Application.Common.Services;
 
 namespace OnlineVeterinary.Application.Features.Auth.Commands.Delete
@@ -13,18 +12,19 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.Delete
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IJwtGenerator _jwtGenerator;
         private readonly IUserRepository _userRepository;
 
 
-        public DeleteMyAccountCommandHandler(IMapper mapper, IUnitOfWork unitOfWork, IMediator mediator, IJwtGenerator jwtGenerator, IUserRepository userRepository)
+        public DeleteMyAccountCommandHandler(IMapper mapper,
+                                             IUnitOfWork unitOfWork,
+                                             IUserRepository userRepository)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _jwtGenerator = jwtGenerator;
             _userRepository = userRepository;
         }
-        public async Task<ErrorOr<string>> Handle(DeleteMyAccountCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<string>> Handle(DeleteMyAccountCommand request,
+                                                  CancellationToken cancellationToken)
         {
             Guid id = StringToGuidConverter.ConvertToGuid(request.Id);
 

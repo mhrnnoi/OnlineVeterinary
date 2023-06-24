@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ErrorOr;
 using MapsterMapper;
 using MediatR;
@@ -12,17 +8,22 @@ namespace OnlineVeterinary.Application.Features.Doctors.Queries.GetAll
 {
     public class GetAllDoctorsQueryHandler : IRequestHandler<GetAllDoctorsQuery, ErrorOr<List<DoctorDTO>>>
     {
-        private readonly IDoctorRepository _doctorRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public GetAllDoctorsQueryHandler(IDoctorRepository doctorRepository, IMapper mapper)
+        public GetAllDoctorsQueryHandler(
+            IUserRepository userRepository,
+            IMapper mapper)
         {
-            _doctorRepository = doctorRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
-        public async Task<ErrorOr<List<DoctorDTO>>> Handle(GetAllDoctorsQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<List<DoctorDTO>>> Handle(
+            GetAllDoctorsQuery request,
+            CancellationToken cancellationToken)
         {
-            var doctors = await _doctorRepository.GetAllAsync();
+            var users = await _userRepository.GetAllAsync();
+            var doctors = users.Where(a=> a.Role.ToLower() =="doctor");
             var doctorsDTO = _mapper.Map<List<DoctorDTO>>(doctors);
 
             return doctorsDTO;

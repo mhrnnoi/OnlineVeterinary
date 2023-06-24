@@ -4,6 +4,5 @@ namespace OnlineVeterinary.Domain.Role.Enums
     {
         Doctor = 0,
         CareGiver,
-        Admin
     }
 }

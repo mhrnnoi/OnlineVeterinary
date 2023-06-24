@@ -12,12 +12,14 @@ namespace OnlineVeterinary.Application.Features.ReservedTimes.Queries.GetAll
         private readonly IReservationRepository _reservationRepository;
         private readonly IMapper _mapper;
 
-        public GetAllReservationsQueryHandler(IReservationRepository reservationRepository, IMapper mapper)
+        public GetAllReservationsQueryHandler(IReservationRepository reservationRepository,
+                                              IMapper mapper)
         {
             _reservationRepository = reservationRepository;
             _mapper = mapper;
         }
-        public async Task<ErrorOr<List<ReservationDTO>>> Handle(GetAllReservationsQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<List<ReservationDTO>>> Handle(GetAllReservationsQuery request,
+                                                                CancellationToken cancellationToken)
         {
             var myGuidId = StringToGuidConverter.ConvertToGuid(request.Id);
             var reservations = await _reservationRepository.GetAllAsync();
@@ -33,7 +35,7 @@ namespace OnlineVeterinary.Application.Features.ReservedTimes.Queries.GetAll
             }
             var myReservationsDTO = _mapper.Map<List<ReservationDTO>>(myReservations);
 
-            return myReservationsDTO;
+            return myReservationsDTO ;
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using ErrorOr;
 using MediatR;
 using OnlineVeterinary.Application.Features.DTOs;

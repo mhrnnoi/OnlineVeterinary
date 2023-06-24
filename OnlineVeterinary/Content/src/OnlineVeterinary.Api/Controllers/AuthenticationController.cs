@@ -30,7 +30,8 @@ namespace OnlineVeterinary.Api.Controllers
 
             var result = await _mediatR.Send(command);
 
-            return result.Match(result => CreatedAtAction("Register", result), errors => Problem(errors));
+            return result.Match(result => CreatedAtAction("Register", result),
+                                 errors => Problem(errors));
 
 
 
@@ -44,7 +45,8 @@ namespace OnlineVeterinary.Api.Controllers
 
             var result = await _mediatR.Send(command);
 
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
 
 
@@ -58,7 +60,8 @@ namespace OnlineVeterinary.Api.Controllers
             var command = new DeleteMyAccountCommand(userId);
             var result = await _mediatR.Send(command);
             
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
 
 
@@ -72,11 +75,13 @@ namespace OnlineVeterinary.Api.Controllers
         {
             string userId = GetUserId(User.Claims);
 
-            var command = new ChangePasswordCommand( Id : userId, NewPassword : request.NewPassword);
+            var command = new ChangePasswordCommand( Id : userId,
+                                                     NewPassword : request.NewPassword);
 
             var result = await _mediatR.Send(command);
 
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
 
 
@@ -86,11 +91,13 @@ namespace OnlineVeterinary.Api.Controllers
         {
             string userId = GetUserId(User.Claims);
 
-            var command = new ChangeEmailCommand(request.NewEmail, userId);
+            var command = new ChangeEmailCommand(request.NewEmail,
+                                                 userId);
 
             var result = await _mediatR.Send(command);
 
-            return result.Match(result => Ok(result), errors => Problem(errors));
+            return result.Match(result => Ok(result),
+                                 errors => Problem(errors));
 
 
 
