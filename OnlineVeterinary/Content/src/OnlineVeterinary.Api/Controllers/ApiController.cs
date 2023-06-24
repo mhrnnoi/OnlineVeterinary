@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using ErrorOr;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +16,13 @@ namespace OnlineVeterinary.Api.Controllers
             //i set user id to sub 
             return User.Claims.Single(a=> a.Type.ToLower() == "id").Value;
         }
-        protected string GetUserName()
+        protected string GetUserFamilyName()
         {
             return  User.Claims.First(a => a.Type == JwtRegisteredClaimNames.FamilyName).Value;
+        }
+        protected string GetUserRole()
+        {
+            return User.Claims.First(a => a.Type == ClaimTypes.Role).Value;
         }
 
         [AllowAnonymous]

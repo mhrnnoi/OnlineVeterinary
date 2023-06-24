@@ -7,6 +7,7 @@ namespace OnlineVeterinary.Application.DTOs
 {
     public class ReservationDTO
     {
+        public Guid Id { get; set; }
         public DateOnly DateOfReservation { get; set; }
         public TimeOnly TimeOfReservation { get; set; }
         public string DrLastName { get; set; } = string.Empty;

@@ -26,6 +26,7 @@ namespace OnlineVeterinary.Infrastructure.Services
             var myCliaims = new [] 
             {
                 new Claim(JwtRegisteredClaimNames.Sub,Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Role,user.Role),
                 new Claim("id",user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),

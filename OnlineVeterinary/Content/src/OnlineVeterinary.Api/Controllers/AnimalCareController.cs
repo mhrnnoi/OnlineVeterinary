@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +11,11 @@ using OnlineVeterinary.Contracts.Pets.Request;
 namespace OnlineVeterinary.Api.Controllers
 {
     [Route("api/[controller]/[action]")]
-    public class CareGiverController : ApiController
+    public class AnimalCareController : ApiController
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediatR;
-        public CareGiverController(IMediator mediatR, IMapper mapper)
+        public AnimalCareController(IMediator mediatR, IMapper mapper)
         {
             _mediatR = mediatR;
             _mapper = mapper;
