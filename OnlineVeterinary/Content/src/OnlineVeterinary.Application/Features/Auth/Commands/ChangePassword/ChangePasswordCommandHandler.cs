@@ -2,7 +2,7 @@ using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
-using OnlineVeterinary.Application.Common.Services;
+
 
 namespace OnlineVeterinary.Application.Features.Auth.Commands.ChangePassword
 {
@@ -25,7 +25,7 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.ChangePassword
         public async Task<ErrorOr<string>> Handle(ChangePasswordCommand request,
                                                   CancellationToken cancellationToken)
         {
-            var userId =  StringToGuidConverter.ConvertToGuid(request.Id);
+            var userId =  Guid.Parse(request.Id);
 
             var user = await _userRepository.GetByIdAsync(userId);
             if (user is null )

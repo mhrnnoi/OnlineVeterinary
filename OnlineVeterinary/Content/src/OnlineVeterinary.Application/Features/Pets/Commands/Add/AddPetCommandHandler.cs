@@ -2,7 +2,6 @@ using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
-using OnlineVeterinary.Application.Common.Services;
 using OnlineVeterinary.Domain.Pet.Entities;
 
 namespace OnlineVeterinary.Application.Features.Pets.Commands.Add

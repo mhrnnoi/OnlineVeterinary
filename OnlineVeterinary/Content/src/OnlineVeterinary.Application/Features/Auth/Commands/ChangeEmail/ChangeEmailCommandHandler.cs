@@ -2,7 +2,6 @@ using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
-using OnlineVeterinary.Application.Common.Services;
 
 namespace OnlineVeterinary.Application.Features.Auth.Commands.ChangeEmail
 {
@@ -23,7 +22,7 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.ChangeEmail
         public async Task<ErrorOr<string>> Handle(ChangeEmailCommand request,
                                                   CancellationToken cancellationToken)
         {
-            var userid = StringToGuidConverter.ConvertToGuid(request.Id);
+            var userid = Guid.Parse(request.Id);
 
             var user = await _userRepository.GetByIdAsync(userid);
 

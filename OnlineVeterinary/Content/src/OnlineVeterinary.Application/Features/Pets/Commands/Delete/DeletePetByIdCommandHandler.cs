@@ -3,7 +3,6 @@ using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
-using OnlineVeterinary.Application.Common.Services;
 
 namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
 {
@@ -27,7 +26,7 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
                                         CancellationToken cancellationToken)
         {
             var pet = await _petRepository.GetByIdAsync(request.Id);
-            var myGuidId = StringToGuidConverter.ConvertToGuid(request.CareGiverId);
+            var myGuidId = Guid.Parse(request.CareGiverId);
 
             if (pet is null || pet.CareGiverId != myGuidId)
             {

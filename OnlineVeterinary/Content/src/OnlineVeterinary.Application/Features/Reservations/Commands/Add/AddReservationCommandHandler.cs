@@ -3,7 +3,6 @@ using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Application.Common.Interfaces.Services;
-using OnlineVeterinary.Application.Common.Services;
 using OnlineVeterinary.Application.Features.Common;
 using OnlineVeterinary.Domain.Pet.Entities;
 using OnlineVeterinary.Domain.Reservation.Entities;
@@ -43,7 +42,7 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
             var doctors = users.Where(a => a.Role.ToLower() == "doctor");
             var doctor = doctors.SingleOrDefault(a => a.Id == request.DoctorId);
             var pet = await _petRepository.GetByIdAsync(request.PetId);
-            var myGuidId = StringToGuidConverter.ConvertToGuid(request.CareGiverId);
+            var myGuidId = Guid.Parse(request.CareGiverId);
             Reservation reservation;
 
 

@@ -2,7 +2,6 @@ using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
-using OnlineVeterinary.Application.Common.Services;
 
 namespace OnlineVeterinary.Application.Features.Auth.Commands.Delete
 {
@@ -26,7 +25,7 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.Delete
         public async Task<ErrorOr<string>> Handle(DeleteMyAccountCommand request,
                                                   CancellationToken cancellationToken)
         {
-            Guid id = StringToGuidConverter.ConvertToGuid(request.Id);
+            Guid id = Guid.Parse(request.Id);
 
             var user = await _userRepository.GetByIdAsync(id);
             if (user is null )

@@ -3,7 +3,6 @@ using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using OnlineVeterinary.Application.Features.DTOs;
-using OnlineVeterinary.Application.Common.Services;
 
 namespace OnlineVeterinary.Application.Features.CareGivers.Queries.GetPets
 {
@@ -27,7 +26,7 @@ namespace OnlineVeterinary.Application.Features.CareGivers.Queries.GetPets
                                     CancellationToken cancellationToken)
         {
             var pets = await _petRepository.GetAllAsync();
-            var myGuidId = StringToGuidConverter.ConvertToGuid(request.Id);
+            var myGuidId = Guid.Parse(request.Id);
             var myPets = pets.Where(a => a.CareGiverId == myGuidId);
             if (myPets.Count() < 1)
             {

@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ErrorOr;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
-using OnlineVeterinary.Application.Common.Services;
+
 
 namespace OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById
 {
@@ -24,7 +19,7 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById
         public async Task<ErrorOr<string>> Handle(DeleteReservationByIdCommand request,
                                                   CancellationToken cancellationToken)
         {
-            var userId = StringToGuidConverter.ConvertToGuid(request.userId);
+            var userId = Guid.Parse(request.userId);
             var reservations = await _reservationRepository.GetAllAsync();
             var userReservations = request.Role.ToLower() switch 
             {
