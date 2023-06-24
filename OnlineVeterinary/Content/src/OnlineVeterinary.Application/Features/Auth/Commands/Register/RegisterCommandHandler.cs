@@ -30,6 +30,13 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.Register
                                                       CancellationToken cancellationToken)
         {
             var user = _mapper.Map<User>(request);
+
+            var isExist = await _userRepository.GetByEmailAsync(request.Email);
+            if (isExist is not null)
+            {
+                return Error.Failure(description : "this email is already exist ");
+            }
+
             _userRepository.Add(user);
             await _unitOfWork.SaveChangesAsync();
 

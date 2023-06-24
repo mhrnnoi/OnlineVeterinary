@@ -19,6 +19,11 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
             RuleFor(z=> z.PetId).NotEmpty();
             RuleFor(z=> z.PetId.ToString().Length).GreaterThan(35);
             RuleFor(z=> _regex.IsMatch(z.PetId.ToString())).Equal(true);
+
+
+            RuleFor(z=> z.DoctorId).NotEmpty();
+            RuleFor(z=> z.DoctorId.ToString().Length).GreaterThan(35);
+            RuleFor(z=> _regex.IsMatch(z.DoctorId.ToString())).Equal(true);
             
             
         }

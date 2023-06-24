@@ -12,21 +12,31 @@ namespace OnlineVeterinary.Application.Features.CareGivers.Queries.GetPets
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
+        private readonly IUserRepository _userRepository;
+
         public GetMyPetsQueryHandler(
                                     IPetRepository petRepository,
                                     IMapper mapper,
-                                    IUnitOfWork unitOfWork)
+                                    IUnitOfWork unitOfWork,
+                                    IUserRepository userRepository)
         {
             _petRepository = petRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
         }
         public async Task<ErrorOr<List<PetDTO>>> Handle(
                                     GetMyPetsQuery request,
                                     CancellationToken cancellationToken)
         {
-            var pets = await _petRepository.GetAllAsync();
             var myGuidId = Guid.Parse(request.Id);
+            var user = await _userRepository.GetByIdAsync(myGuidId);
+            if (user is null)
+            {
+                return Error.NotFound("you have invalid Id or this user is not exist any more");
+            }
+            var pets = await _petRepository.GetAllAsync();
+
             var myPets = pets.Where(a => a.CareGiverId == myGuidId);
             if (myPets.Count() < 1)
             {

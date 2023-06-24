@@ -6,6 +6,10 @@ namespace OnlineVeterinary.Application.Features.Auth.Queries.Login
     {
         public LoginCommandValidator()
         {
+            
+            
+            
+            
         }
     }
 }

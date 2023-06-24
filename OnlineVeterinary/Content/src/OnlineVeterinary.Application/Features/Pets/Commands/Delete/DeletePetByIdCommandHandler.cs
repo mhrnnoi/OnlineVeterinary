@@ -11,15 +11,18 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
         private readonly IPetRepository _petRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserRepository _userRepository;
 
         public DeletePetByIdCommandHandler(
                                 IPetRepository petRepository,
                                 IMapper mapper,
-                                IUnitOfWork unitOfWork)
+                                IUnitOfWork unitOfWork,
+                                IUserRepository userRepository)
         {
             _petRepository = petRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
         }
         public async Task<ErrorOr<string>> Handle(
                                         DeletePetByIdCommand request,
@@ -28,9 +31,15 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
             var pet = await _petRepository.GetByIdAsync(request.Id);
             var myGuidId = Guid.Parse(request.CareGiverId);
 
+            var user = await _userRepository.GetByIdAsync(myGuidId);
+            if (user is null)
+            {
+                return Error.NotFound("you have invalid Id or this user is not exist any more");
+            }
+
             if (pet is null || pet.CareGiverId != myGuidId)
             {
-                return Error.NotFound();
+                return Error.NotFound("you dont have any pet with this id");
             }
             _petRepository.Remove(pet);
             await _unitOfWork.SaveChangesAsync();

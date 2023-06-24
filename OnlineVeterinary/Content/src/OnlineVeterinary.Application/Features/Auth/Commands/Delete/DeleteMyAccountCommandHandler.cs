@@ -30,7 +30,7 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.Delete
             var user = await _userRepository.GetByIdAsync(id);
             if (user is null )
             {
-                return Error.NotFound();
+                return Error.NotFound("you have invalid Id or this user is not exist any more");
             }
             _userRepository.Remove(user);
             await _unitOfWork.SaveChangesAsync();
