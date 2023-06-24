@@ -3,6 +3,7 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnlineVeterinary.Api.Identity;
 using OnlineVeterinary.Application.Features.Reservations.Commands.Add;
 using OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById;
 using OnlineVeterinary.Application.Features.ReservedTimes.Queries.GetAll;
@@ -22,6 +23,8 @@ namespace OnlineVeterinary.Api.Controllers
         }
 
         [HttpGet]
+        [RequiresClaim(ClaimTypes.Role, "caregiver", "doctor")]
+
         public async Task<IActionResult> GetMyAllReservationsAsync()
         {
             var userId = GetUserId(User.Claims);
@@ -37,6 +40,8 @@ namespace OnlineVeterinary.Api.Controllers
 
 
         [HttpPost]
+        [RequiresClaim(ClaimTypes.Role, "caregiver")]
+
         public async Task<IActionResult> AddReservationAsync(AddReservationRequest request)
         {
             var userId = GetUserId(User.Claims);
@@ -50,6 +55,8 @@ namespace OnlineVeterinary.Api.Controllers
         }
 
         [HttpDelete]
+        [RequiresClaim(ClaimTypes.Role, "caregiver", "doctor")]
+
         public async Task<IActionResult> DeleteMyReservationByIdAsync(Guid id)
         {
             var userId = GetUserId(User.Claims);

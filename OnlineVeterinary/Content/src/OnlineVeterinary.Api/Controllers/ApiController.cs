@@ -26,6 +26,7 @@ namespace OnlineVeterinary.Api.Controllers
         {
             return claims.First(a => a.Type == ClaimTypes.Role)
                                                         .Value;
+                                                        
         }
 
         [AllowAnonymous]

@@ -33,15 +33,12 @@ namespace OnlineVeterinary.Application.Features.CareGivers.Queries.GetPets
             var user = await _userRepository.GetByIdAsync(myGuidId);
             if (user is null)
             {
-                return Error.NotFound("you have invalid Id or this user is not exist any more");
+                return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
             var pets = await _petRepository.GetAllAsync();
 
             var myPets = pets.Where(a => a.CareGiverId == myGuidId);
-            if (myPets.Count() < 1)
-            {
-                return Error.NotFound();
-            }
+            
             var petsDTO = _mapper.Map<List<PetDTO>>(myPets);
             return petsDTO;
         }

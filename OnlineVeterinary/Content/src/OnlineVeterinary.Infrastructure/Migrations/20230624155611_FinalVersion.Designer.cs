@@ -12,8 +12,8 @@ using OnlineVeterinary.Infrastructure.Persistence.DataContext;
 namespace OnlineVeterinary.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230624144625_Pets")]
-    partial class Pets
+    [Migration("20230624155611_FinalVersion")]
+    partial class FinalVersion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

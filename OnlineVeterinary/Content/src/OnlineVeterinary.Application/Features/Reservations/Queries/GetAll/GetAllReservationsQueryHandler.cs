@@ -29,7 +29,7 @@ namespace OnlineVeterinary.Application.Features.ReservedTimes.Queries.GetAll
             var user = await _userRepository.GetByIdAsync(myGuidId);
             if (user is null)
             {
-                return Error.NotFound("you have invalid Id or this user is not exist any more");
+                return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
 
             var reservations = await _reservationRepository.GetAllAsync();

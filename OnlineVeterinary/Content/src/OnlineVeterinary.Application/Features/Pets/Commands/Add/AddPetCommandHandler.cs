@@ -33,8 +33,10 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Add
             var user = await _userRepository.GetByIdAsync(id);
             if (user is null )
             {
-                return Error.NotFound("you have invalid Id or this user is not exist any more");
+                return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
+
+           
             var pet = _mapper.Map<Pet>(request);
             _petRepository.Add(pet);
             await _unitOfWork.SaveChangesAsync();

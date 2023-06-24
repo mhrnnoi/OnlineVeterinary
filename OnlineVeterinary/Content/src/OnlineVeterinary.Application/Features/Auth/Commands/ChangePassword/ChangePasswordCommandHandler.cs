@@ -30,7 +30,7 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.ChangePassword
             var user = await _userRepository.GetByIdAsync(userId);
             if (user is null )
             {
-                return Error.NotFound("you have invalid Id or this user is not exist any more");
+                return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
             user.Password = request.NewPassword;
 

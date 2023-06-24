@@ -28,7 +28,7 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById
             var user = await _userRepository.GetByIdAsync(userId);
             if (user is null )
             {
-                return Error.NotFound("you have invalid Id or this user is not exist any more");
+                return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
             var reservations = await _reservationRepository.GetAllAsync();
             var userReservations = request.Role.ToLower() switch 
@@ -42,7 +42,7 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById
             var reservation = userReservations.SingleOrDefault(a=> a.Id == request.Id);
             if (reservation is null  )
             {
-                return Error.NotFound("you dont have any reservation with this id");
+                return Error.NotFound(description : "you dont have any reservation with this id");
             }
             _reservationRepository.Remove(reservation);
             await _unitOfWork.SaveChangesAsync();

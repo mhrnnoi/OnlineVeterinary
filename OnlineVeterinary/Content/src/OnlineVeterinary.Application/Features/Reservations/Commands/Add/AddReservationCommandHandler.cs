@@ -49,20 +49,20 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
             var user = await _userRepository.GetByIdAsync(myGuidId);
             if (user is null)
             {
-                return Error.NotFound("you have invalid Id or this user is not exist any more");
+                return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
 
             if (doctor is null)
             {
-                return Error.NotFound("the doctor with this id is not exist");
+                return Error.NotFound(description : "the doctor with this id is not exist");
             }
             if (pet is null)
             {
-                return Error.NotFound("the pet with this id is not exist");
+                return Error.NotFound(description : "the pet with this id is not exist");
             }
             if (pet.CareGiverId != myGuidId)
             {
-                return Error.NotFound("you dont have any pet with this id");
+                return Error.NotFound(description : "you dont have any pet with this id");
             }
 
             var allReservations = await _reservationRepository.GetAllAsync();

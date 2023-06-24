@@ -34,12 +34,12 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
             var user = await _userRepository.GetByIdAsync(myGuidId);
             if (user is null)
             {
-                return Error.NotFound("you have invalid Id or this user is not exist any more");
+                return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
 
             if (pet is null || pet.CareGiverId != myGuidId)
             {
-                return Error.NotFound("you dont have any pet with this id");
+                return Error.NotFound(description : "you dont have any pet with this id");
             }
             _petRepository.Remove(pet);
             await _unitOfWork.SaveChangesAsync();

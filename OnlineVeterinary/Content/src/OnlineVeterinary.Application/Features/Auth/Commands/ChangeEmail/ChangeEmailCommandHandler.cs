@@ -28,7 +28,7 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.ChangeEmail
 
             if (user is null)
             {
-                return Error.NotFound("you have invalid Id or this user is not exist any more");
+                return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
             var isExist = await _userRepository.GetByEmailAsync(request.NewEmail);
             if (isExist is not null)

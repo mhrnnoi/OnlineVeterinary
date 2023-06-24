@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OnlineVeterinary.Api.Identity;
 using OnlineVeterinary.Application.Features.CareGivers.Queries.GetPets;
 using OnlineVeterinary.Application.Features.Doctors.Queries.GetAll;
 using OnlineVeterinary.Application.Features.Doctors.Queries.GetById;
@@ -22,6 +24,7 @@ namespace OnlineVeterinary.Api.Controllers
         }
 
         [HttpPost]
+        [RequiresClaim(ClaimTypes.Role, "caregiver")]
         public async Task<IActionResult> AddPetAsync(AddPetRequest request)
         {
             var petInfo = _mapper.Map<AddPetCommand>((request));
@@ -43,6 +46,8 @@ namespace OnlineVeterinary.Api.Controllers
 
 
         [HttpDelete]
+        [RequiresClaim(ClaimTypes.Role, "caregiver")]
+
         public async Task<IActionResult> DeleteMyPetByIdAsync(Guid id)
         {
             var userId = GetUserId(User.Claims);
@@ -55,6 +60,8 @@ namespace OnlineVeterinary.Api.Controllers
 
 
         [HttpGet]
+        [RequiresClaim(ClaimTypes.Role, "caregiver")]
+
         public async Task<IActionResult> GetDoctorByIdAsync(Guid id)
         {
             var query = new GetDoctorByIdQuery(id);
@@ -65,6 +72,8 @@ namespace OnlineVeterinary.Api.Controllers
         }
 
         [HttpGet]
+        [RequiresClaim(ClaimTypes.Role, "caregiver")]
+
         public async Task<IActionResult> GetMyPetsAsync()
         {
             var userId = GetUserId(User.Claims);
@@ -77,6 +86,8 @@ namespace OnlineVeterinary.Api.Controllers
 
 
         [HttpGet]
+        [RequiresClaim(ClaimTypes.Role, "caregiver")]
+
         public async Task<IActionResult> GetAllDoctorsAsync()
         {
             var query = new GetAllDoctorsQuery();

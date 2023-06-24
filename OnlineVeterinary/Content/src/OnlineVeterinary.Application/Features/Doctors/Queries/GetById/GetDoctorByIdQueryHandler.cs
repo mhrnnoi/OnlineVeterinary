@@ -21,7 +21,7 @@ namespace OnlineVeterinary.Application.Features.Doctors.Queries.GetById
             var user = await _userRepository.GetByIdAsync(request.Id);
             if (user is null || user.Role.ToLower() != "doctor")
             {
-                return Error.NotFound("doctor with this id is not exist");
+                return Error.NotFound(description : "doctor with this id is not exist");
             }
 
             return _mapper.Map<DoctorDTO>(user);
