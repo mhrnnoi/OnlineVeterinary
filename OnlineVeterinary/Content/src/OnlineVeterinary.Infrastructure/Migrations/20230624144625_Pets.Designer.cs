@@ -12,7 +12,7 @@ using OnlineVeterinary.Infrastructure.Persistence.DataContext;
 namespace OnlineVeterinary.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230624125238_Pets")]
+    [Migration("20230624144625_Pets")]
     partial class Pets
     {
         /// <inheritdoc />

@@ -1,7 +1,5 @@
-using System;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -20,44 +18,37 @@ namespace OnlineVeterinary.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, ConfigurationManager configurationManager
         )
         {
-            services.AddMapping();
 
-            // services.Configure<DbSettings>(configurationManager.GetSection(DbSettings.SectionName));
+            var jwtSettings = new JwtSettings();
+            configurationManager.Bind(JwtSettings.SectionName, jwtSettings);
+
+            services.AddMapping();
+            services.AddDbContext<AppDbContext>();
+
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPetRepository, PetRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
-
-
-            var jwtSettings = new JwtSettings();
-            configurationManager.Bind(JwtSettings.SectionName, jwtSettings);
+            services.AddScoped<IDateTimeProvider, DatetimeProvider>();
             services.AddSingleton(Options.Create(jwtSettings));
-
-            var dbSettings = new DbSettings();
-            configurationManager.Bind(DbSettings.SectionName, dbSettings);
-            services.AddSingleton(Options.Create(dbSettings));
 
 
             services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = false,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
-                };
-            });
-            services.AddScoped<IDateTimeProvider, DatetimeProvider>();
-            services.AddDbContext<AppDbContext>(options =>
-            {
-                options.UseNpgsql("Server=127.0.0.1; Port =5432; User Id = postgres; password = Mehran123; database = OnlineVeterinary");
-            });
+          .AddJwtBearer(options =>
+          {
+              options.TokenValidationParameters = new TokenValidationParameters()
+              {
+                  ValidateIssuer = false,
+                  ValidateAudience = false,
+                  ValidateLifetime = false,
+                  ValidateIssuerSigningKey = true,
+                  ValidIssuer = jwtSettings.Issuer,
+                  ValidAudience = jwtSettings.Audience,
+                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+              };
+          });
+
 
             return services;
         }
