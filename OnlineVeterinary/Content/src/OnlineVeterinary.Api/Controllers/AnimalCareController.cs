@@ -45,7 +45,7 @@ namespace OnlineVeterinary.Api.Controllers
 
 
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [RequiresClaim(ClaimTypes.Role, "caregiver")]
 
         public async Task<IActionResult> DeleteMyPetByIdAsync(Guid id)
@@ -59,7 +59,7 @@ namespace OnlineVeterinary.Api.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [RequiresClaim(ClaimTypes.Role, "caregiver")]
 
         public async Task<IActionResult> GetDoctorByIdAsync(Guid id)

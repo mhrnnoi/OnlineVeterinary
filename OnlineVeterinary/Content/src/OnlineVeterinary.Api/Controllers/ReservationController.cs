@@ -42,7 +42,7 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpPost]
         [RequiresClaim(ClaimTypes.Role, "caregiver")]
 
-        public async Task<IActionResult> AddReservationAsync(AddReservationRequest request)
+        public async Task<IActionResult> AddReservationAsync([FromBody] AddReservationRequest request)
         {
             var userId = GetUserId(User.Claims);
             var command = new AddReservationCommand(request.PetId,
@@ -54,7 +54,7 @@ namespace OnlineVeterinary.Api.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [RequiresClaim(ClaimTypes.Role, "caregiver", "doctor")]
 
         public async Task<IActionResult> DeleteMyReservationByIdAsync(Guid id)
