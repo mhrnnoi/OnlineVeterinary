@@ -30,7 +30,7 @@ namespace OnlineVeterinary.Api.Controllers
 
             var result = await _mediatR.Send(command);
 
-            return result.Match(result => CreatedAtAction("Register", result),
+            return result.Match(result => Ok(result),
                                  errors => Problem(errors));
 
 
