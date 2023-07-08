@@ -56,7 +56,7 @@ namespace OnlineVeterinary.Api.Controllers
             var userId = GetUserId(User.Claims);
             var command = new DeletePetByIdCommand(id, userId);
             var result = await _mediatR.Send(command);
-            return result.Match(result => Ok(result),
+            return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
 
         }

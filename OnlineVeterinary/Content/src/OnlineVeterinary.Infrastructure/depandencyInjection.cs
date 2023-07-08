@@ -24,7 +24,6 @@ namespace OnlineVeterinary.Infrastructure
 
             services.AddMapping();
             services.AddDbContext<AppDbContext>();
-
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPetRepository, PetRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();

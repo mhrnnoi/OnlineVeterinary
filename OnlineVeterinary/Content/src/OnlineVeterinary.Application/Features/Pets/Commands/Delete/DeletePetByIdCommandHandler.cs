@@ -12,17 +12,20 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
+        private readonly ICacheService _cacheService;
 
         public DeletePetByIdCommandHandler(
                                 IPetRepository petRepository,
                                 IMapper mapper,
                                 IUnitOfWork unitOfWork,
-                                IUserRepository userRepository)
+                                IUserRepository userRepository,
+                                ICacheService cacheService)
         {
             _petRepository = petRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
+            _cacheService = cacheService;
         }
         public async Task<ErrorOr<string>> Handle(
                                         DeletePetByIdCommand request,
@@ -43,7 +46,8 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
             }
             _petRepository.Remove(pet);
             await _unitOfWork.SaveChangesAsync();
-            return "Deleted succesfuly";
+            _cacheService.RemoveData($"{myGuidId} pets");
+            return "Deleted successfully";
         }
     }
 }

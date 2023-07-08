@@ -117,12 +117,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="pet Added succesfully" xml:space="preserve">
-    <value>pet Added succesfuly</value>
+  <data name="pet Added successfully" xml:space="preserve">
+    <value>pet Added successfully</value>
     <comment/>
   </data>
   <data name="you have invalid Id or this user is not exist any more" xml:space="preserve">
     <value>you have invalid Id or this user is not exist any more</value>
+    <comment/>
+  </data>
+  <data name="you dont have any pet with this id" xml:space="preserve">
+    <value>you dont have any pet with this id</value>
+    <comment/>
+  </data>
+  <data name="Deleted successfully" xml:space="preserve">
+    <value>Deleted successfully</value>
+    <comment/>
+  </data>
+  <data name="doctor with this id is not exist" xml:space="preserve">
+    <value>doctor with this id is not exist</value>
     <comment/>
   </data>
 </root>

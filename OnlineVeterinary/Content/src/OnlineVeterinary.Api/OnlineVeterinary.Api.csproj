@@ -20,6 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.8" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <ProjectReference Include="..\OnlineVeterinary.Contracts\OnlineVeterinary.Contracts.csproj" />
     <ProjectReference Include="..\OnlineVeterinary.Infrastructure\OnlineVeterinary.Infrastructure.csproj" />

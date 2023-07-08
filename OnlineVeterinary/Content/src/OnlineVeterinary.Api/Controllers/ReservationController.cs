@@ -3,6 +3,7 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using OnlineVeterinary.Api.Identity;
 using OnlineVeterinary.Application.Features.Reservations.Commands.Add;
 using OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById;
@@ -14,12 +15,15 @@ namespace OnlineVeterinary.Api.Controllers
     [Route("api/[controller]/[action]")]
     public class ReservationController : ApiController
     {
+        private readonly IStringLocalizer<ReservationController> _localizer;
+
         private readonly IMapper _mapper;
         private readonly IMediator _mediatR;
-        public ReservationController(IMediator mediatR, IMapper mapper)
+        public ReservationController(IMediator mediatR, IMapper mapper, IStringLocalizer<ReservationController> localizer)
         {
             _mediatR = mediatR;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -64,7 +68,7 @@ namespace OnlineVeterinary.Api.Controllers
             var command = new DeleteReservationByIdCommand(id, userId, userRole);
 
             var result = await _mediatR.Send(command);
-            return result.Match(result => Ok(result),
+            return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
         }
 

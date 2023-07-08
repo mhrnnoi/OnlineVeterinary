@@ -18,6 +18,7 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPetRepository _petRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly ICacheService _cacheService;
 
         public AddReservationCommandHandler(
                                     IReservationRepository reservationRepository,
@@ -25,7 +26,8 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
                                     IUnitOfWork unitOfWork,
                                     IPetRepository petRepository,
                                     IDateTimeProvider dateTimeProvider,
-                                    IUserRepository userRepository)
+                                    IUserRepository userRepository,
+                                    ICacheService cacheService)
         {
             _reservationRepository = reservationRepository;
             _mapper = mapper;
@@ -33,6 +35,7 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
             _petRepository = petRepository;
             _dateTimeProvider = dateTimeProvider;
             _userRepository = userRepository;
+            _cacheService = cacheService;
         }
         public async Task<ErrorOr<ReservationDTO>> Handle(
                                             AddReservationCommand request,
@@ -88,6 +91,8 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
             reservation = FormReservation(doctor, pet, myGuidId, reserveDate);
             _reservationRepository.Add(reservation);
             await _unitOfWork.SaveChangesAsync();
+            _cacheService.RemoveData($"{myGuidId} reservations");
+
             return _mapper.Map<ReservationDTO>(reservation);
 
 
