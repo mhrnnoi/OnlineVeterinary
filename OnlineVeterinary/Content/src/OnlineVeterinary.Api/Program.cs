@@ -24,7 +24,7 @@ var supportedCultures = new[]
     
 var options = new RequestLocalizationOptions
 {
-    DefaultRequestCulture = new RequestCulture("en-US"),
+    DefaultRequestCulture = new RequestCulture("fr-FR"),
     SupportedCultures = supportedCultures,
     SupportedUICultures = supportedCultures
 };

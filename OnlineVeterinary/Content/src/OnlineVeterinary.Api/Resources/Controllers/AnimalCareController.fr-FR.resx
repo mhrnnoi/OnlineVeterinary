@@ -125,4 +125,16 @@
     <value>vous avez un identifiant non valide ou cet utilisateur n’existe plus</value>
     <comment/>
   </data>
+  <data name="you dont have any pet with this id" xml:space="preserve">
+    <value>Vous n’avez pas d’animal de compagnie avec cet identifiant</value>
+    <comment/>
+  </data>
+  <data name="Deleted succesfully" xml:space="preserve">
+    <value>Succès supprimé</value>
+    <comment/>
+  </data>
+  <data name="doctor with this id is not exist" xml:space="preserve">
+    <value>médecin avec cet identifiant n’existe pas</value>
+    <comment/>
+  </data>
 </root>

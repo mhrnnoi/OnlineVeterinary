@@ -43,7 +43,7 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
             }
             _petRepository.Remove(pet);
             await _unitOfWork.SaveChangesAsync();
-            return "Deleted succesfuly";
+            return "Deleted succesfully";
         }
     }
 }
