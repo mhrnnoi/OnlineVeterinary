@@ -27,7 +27,7 @@ namespace OnlineVeterinary.Infrastructure.Persistence.DataContext
 
             if (options.IsConfigured == false)
             {
-                options.UseNpgsql("Server=127.0.0.1; Port =5432; User Id = postgres; password = Mehran123; database = OnlineVeterinary");
+                options.UseNpgsql("Server=127.0.0.1; Port =5432; User Id = postgres; password = postgres; database = OnlineVeterinary");
             }
 
         }
