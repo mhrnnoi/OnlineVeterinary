@@ -1,5 +1,6 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Serilog;
 
 namespace OnlineVeterinary.Api
 {

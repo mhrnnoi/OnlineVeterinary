@@ -3,10 +3,18 @@ using Microsoft.AspNetCore.Localization;
 using OnlineVeterinary.Api;
 using OnlineVeterinary.Application;
 using OnlineVeterinary.Infrastructure;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 {
     builder.Services.AddApplication()
@@ -21,7 +29,7 @@ var supportedCultures = new[]
         new CultureInfo("en-US"),
         new CultureInfo("fr-FR")
     };
-    
+
 var options = new RequestLocalizationOptions
 {
     DefaultRequestCulture = new RequestCulture("fr-FR"),
