@@ -36,7 +36,7 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.ChangePassword
 
             _userRepository.Update(user);
             await _unitOfWork.SaveChangesAsync();
-            return "Password changed succesfuly";
+            return "Password changed successfully";
 
 
 

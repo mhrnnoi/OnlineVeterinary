@@ -37,7 +37,7 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.Delete
 
 
 
-            return "Deleted succesfuly";
+            return "Deleted successfully";
 
         }
     }

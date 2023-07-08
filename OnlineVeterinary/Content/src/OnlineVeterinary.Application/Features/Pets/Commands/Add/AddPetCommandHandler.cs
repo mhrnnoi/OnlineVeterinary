@@ -40,7 +40,7 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Add
             var pet = _mapper.Map<Pet>(request);
             _petRepository.Add(pet);
             await _unitOfWork.SaveChangesAsync();
-            return "pet Added succesfully";
+            return "pet Added successfully";
         }
 
 

@@ -2,6 +2,7 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using OnlineVeterinary.Application.Features.Auth.Commands.ChangeEmail;
 using OnlineVeterinary.Application.Features.Auth.Commands.ChangePassword;
 using OnlineVeterinary.Application.Features.Auth.Commands.Delete;
@@ -14,12 +15,14 @@ namespace OnlineVeterinary.Api.Controllers
     [Route("api/[controller]/[action]")]
     public class AuthenticationController : ApiController
     {
+        private readonly IStringLocalizer<AuthenticationController> _localizer;
         private readonly IMapper _mapper;
         private readonly IMediator _mediatR;
-        public AuthenticationController(IMediator mediatR, IMapper mapper)
+        public AuthenticationController(IMediator mediatR, IMapper mapper, IStringLocalizer<AuthenticationController> localizer)
         {
             _mediatR = mediatR;
             _mapper = mapper;
+            _localizer = localizer;
         }
         [HttpPost]
         [AllowAnonymous]
@@ -60,7 +63,7 @@ namespace OnlineVeterinary.Api.Controllers
             var command = new DeleteMyAccountCommand(userId);
             var result = await _mediatR.Send(command);
             
-            return result.Match(result => Ok(result),
+            return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
 
 
@@ -80,7 +83,7 @@ namespace OnlineVeterinary.Api.Controllers
 
             var result = await _mediatR.Send(command);
 
-            return result.Match(result => Ok(result),
+            return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
 
 
@@ -96,7 +99,7 @@ namespace OnlineVeterinary.Api.Controllers
 
             var result = await _mediatR.Send(command);
 
-            return result.Match(result => Ok(result),
+            return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
 
 

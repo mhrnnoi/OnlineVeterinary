@@ -117,10 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="pet Added successfully" xml:space="preserve">
-    <value>animal de compagnie ajouté avec succès</value>
-    <comment/>
-  </data>
   <data name="you have invalid Id or this user is not exist any more" xml:space="preserve">
     <value>vous avez un identifiant non valide ou cet utilisateur n’existe plus</value>
     <comment/>

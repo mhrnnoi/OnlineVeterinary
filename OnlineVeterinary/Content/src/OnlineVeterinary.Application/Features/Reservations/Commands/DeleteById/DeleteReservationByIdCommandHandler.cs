@@ -47,7 +47,7 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById
             _reservationRepository.Remove(reservation);
             await _unitOfWork.SaveChangesAsync();
 
-            return "Deleted Succesfuly";
+            return "Deleted successfully";
         }
     }
 }

@@ -39,7 +39,7 @@ namespace OnlineVeterinary.Application.Features.Auth.Commands.ChangeEmail
 
             _userRepository.Update(user);
             await _unitOfWork.SaveChangesAsync();
-            return "email changed succesfuly";
+            return "email changed successfully";
         }
     }
 }
