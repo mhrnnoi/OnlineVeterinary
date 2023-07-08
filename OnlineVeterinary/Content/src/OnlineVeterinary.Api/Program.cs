@@ -1,3 +1,5 @@
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 using OnlineVeterinary.Api;
 using OnlineVeterinary.Application;
 using OnlineVeterinary.Infrastructure;
@@ -14,9 +16,23 @@ var config = builder.Configuration;
 
 var errorPath = "/error";
 
+var supportedCultures = new[]
+    {
+        new CultureInfo("en-US"),
+        new CultureInfo("fr-FR")
+    };
+    
+var options = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en-US"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+
 var app = builder.Build();
 {
 
+    app.UseRequestLocalization(options);
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseExceptionHandler(errorPath);
@@ -26,3 +42,4 @@ var app = builder.Build();
     app.MapControllers();
     app.Run();
 }
+
