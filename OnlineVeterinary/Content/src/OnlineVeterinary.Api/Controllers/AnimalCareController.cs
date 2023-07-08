@@ -2,6 +2,7 @@ using System.Security.Claims;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using OnlineVeterinary.Api.Identity;
 using OnlineVeterinary.Application.Features.CareGivers.Queries.GetPets;
 using OnlineVeterinary.Application.Features.Doctors.Queries.GetAll;
@@ -15,12 +16,14 @@ namespace OnlineVeterinary.Api.Controllers
     [Route("api/[controller]/[action]")]
     public class AnimalCareController : ApiController
     {
+        private readonly IStringLocalizer<AnimalCareController> _localizer;
         private readonly IMapper _mapper;
         private readonly IMediator _mediatR;
-        public AnimalCareController(IMediator mediatR, IMapper mapper)
+        public AnimalCareController(IMediator mediatR, IMapper mapper, IStringLocalizer<AnimalCareController> localizer)
         {
             _mediatR = mediatR;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
         [HttpPost]
@@ -38,7 +41,7 @@ namespace OnlineVeterinary.Api.Controllers
 
             var result = await _mediatR.Send(command);
 
-            return result.Match(result => Ok(result),
+            return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
 
         }
