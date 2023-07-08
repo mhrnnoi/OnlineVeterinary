@@ -2,6 +2,7 @@ using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
+using OnlineVeterinary.Application.Features.DTOs;
 using OnlineVeterinary.Domain.Pet.Entities;
 
 namespace OnlineVeterinary.Application.Features.Pets.Commands.Add
@@ -13,16 +14,20 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Add
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
 
+        private readonly ICacheService _cacheService;
+
         public AddPetCommandHandler(
             IPetRepository petRepository,
             IMapper mapper,
             IUnitOfWork unitOfWork,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ICacheService cacheService)
         {
             _petRepository = petRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
+            _cacheService = cacheService;
         }
         public async Task<ErrorOr<string>> Handle(
             AddPetCommand request,
@@ -40,6 +45,8 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Add
             var pet = _mapper.Map<Pet>(request);
             _petRepository.Add(pet);
             await _unitOfWork.SaveChangesAsync();
+            _cacheService.RemoveData($"{id} pets");
+            
             return "pet Added successfully";
         }
 

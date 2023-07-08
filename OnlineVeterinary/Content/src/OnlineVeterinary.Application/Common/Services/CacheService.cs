@@ -3,7 +3,7 @@ using System.Text.Json;
 using OnlineVeterinary.Application.Common.Interfaces.Persistence;
 using StackExchange.Redis;
 
-namespace OnlineVeterinary.Infrastructure.Persistence;
+namespace OnlineVeterinary.Application.Common.Services;
 
 public class CacheService : ICacheService
 {

@@ -11,14 +11,17 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
 
+        private readonly ICacheService _cacheService;
 
         public DeleteReservationByIdCommandHandler(IReservationRepository reservationRepository,
                                                    IUnitOfWork unitOfWork,
-                                                   IUserRepository userRepository)
+                                                   IUserRepository userRepository,
+                                                   ICacheService cacheService)
         {
             _reservationRepository = reservationRepository;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
+            _cacheService = cacheService;
         }
         public async Task<ErrorOr<string>> Handle(DeleteReservationByIdCommand request,
                                                   CancellationToken cancellationToken)
@@ -46,6 +49,8 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById
             }
             _reservationRepository.Remove(reservation);
             await _unitOfWork.SaveChangesAsync();
+            _cacheService.RemoveData($"{userId} reservations");
+
 
             return "Deleted successfully";
         }
