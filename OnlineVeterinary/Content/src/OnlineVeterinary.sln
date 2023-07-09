@@ -5,15 +5,15 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9E1D7BFF-606E-4102-8C76-8FFCB09758EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Api", "src\OnlineVeterinary.Api\OnlineVeterinary.Api.csproj", "{873B6486-7892-472E-82B5-B9D4BAC4FE12}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Api", "OnlineVeterinary.Api\OnlineVeterinary.Api.csproj", "{873B6486-7892-472E-82B5-B9D4BAC4FE12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Application", "src\OnlineVeterinary.Application\OnlineVeterinary.Application.csproj", "{F8417CCE-02B1-438B-BBB9-AE7401DA6B94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Application", "OnlineVeterinary.Application\OnlineVeterinary.Application.csproj", "{F8417CCE-02B1-438B-BBB9-AE7401DA6B94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Contracts", "src\OnlineVeterinary.Contracts\OnlineVeterinary.Contracts.csproj", "{C6B0C61F-ABF6-4B62-B8C9-A03FCB634699}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Contracts", "OnlineVeterinary.Contracts\OnlineVeterinary.Contracts.csproj", "{C6B0C61F-ABF6-4B62-B8C9-A03FCB634699}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Domain", "src\OnlineVeterinary.Domain\OnlineVeterinary.Domain.csproj", "{160C0BC1-906A-4783-BED9-243E50622439}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Domain", "OnlineVeterinary.Domain\OnlineVeterinary.Domain.csproj", "{160C0BC1-906A-4783-BED9-243E50622439}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Infrastructure", "src\OnlineVeterinary.Infrastructure\OnlineVeterinary.Infrastructure.csproj", "{EC5F5504-7003-407A-A3EC-1A757E943576}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVeterinary.Infrastructure", "OnlineVeterinary.Infrastructure\OnlineVeterinary.Infrastructure.csproj", "{EC5F5504-7003-407A-A3EC-1A757E943576}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
