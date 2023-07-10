@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OnlineVeterinary.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class FinalVersion : Migration
+    public partial class Localtocontainer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

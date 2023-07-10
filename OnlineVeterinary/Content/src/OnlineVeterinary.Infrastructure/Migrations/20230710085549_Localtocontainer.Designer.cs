@@ -12,8 +12,8 @@ using OnlineVeterinary.Infrastructure.Persistence.DataContext;
 namespace OnlineVeterinary.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230624155611_FinalVersion")]
-    partial class FinalVersion
+    [Migration("20230710085549_Localtocontainer")]
+    partial class Localtocontainer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,25 +29,31 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id");
 
                     b.Property<Guid>("CareGiverId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("CareGiverId");
 
                     b.Property<string>("CareGiverLastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("CareGiverLastName");
 
                     b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("DateOfBirth");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Name");
 
                     b.Property<string>("PetType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("PetType");
 
                     b.HasKey("Id");
 
@@ -58,31 +64,39 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id");
 
                     b.Property<Guid>("CareGiverId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("CareGiverId");
 
                     b.Property<string>("CareGiverLastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("CareGiverLastName");
 
                     b.Property<DateTime>("DateOfReservation")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("DateOfReservation");
 
                     b.Property<Guid>("DoctorId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("DoctorId");
 
                     b.Property<string>("DrLastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("DrLastName");
 
                     b.Property<Guid>("PetId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("PetId");
 
                     b.Property<string>("PetName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("PetName");
 
                     b.HasKey("Id");
 
@@ -93,27 +107,33 @@ namespace OnlineVeterinary.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("FirstName");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("LastName");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Password");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Role");
 
                     b.HasKey("Id");
 
