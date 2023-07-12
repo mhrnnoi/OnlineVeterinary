@@ -10,9 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OnlineVeterinary.Application\OnlineVeterinary.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.18" />
