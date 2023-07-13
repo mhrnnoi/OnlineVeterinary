@@ -32,7 +32,7 @@ public class DeleteMyAccountCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnNotFound_WhenUserIdIsNotExist()
+    public async Task Handle_Should_ReturnNotFound_WhenUserIsNotExist()
     {
         //Arrange
         _userRepositoryMock.Setup(x => x.GetByIdAsync(_id))

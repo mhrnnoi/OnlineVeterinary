@@ -32,7 +32,7 @@ public class ChangeEmailCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnNotFound_WhenUserIdIsNotExist()
+    public async Task Handle_Should_ReturnNotFound_WhenUserIsNotExist()
     {
         //Arrange
 

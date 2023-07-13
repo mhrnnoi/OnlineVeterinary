@@ -48,7 +48,8 @@ public class RegisterCommandHandlerTests
         var result = await _handler.Handle(_command, default);
         //Assert
         Assert.True(result.IsError);
-        Assert.Equal(Error.Failure(description: "this email is already exist "), result.FirstError);
+        Assert.Equal(Error.Failure(description: "this email is already exist "),
+                                     result.FirstError);
 
 
 
