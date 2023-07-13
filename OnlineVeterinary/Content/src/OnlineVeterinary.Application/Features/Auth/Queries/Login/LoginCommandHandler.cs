@@ -11,18 +11,15 @@ namespace OnlineVeterinary.Application.Features.Auth.Queries.Login
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtGenerator _jwtGenerator;
 
         public LoginCommandHandler(
                                     IUserRepository userRepository,
                                     IMapper mapper,
-                                    IUnitOfWork unitOfWork,
                                     IJwtGenerator jwtGenerator)
         {
             _userRepository = userRepository;
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
             _jwtGenerator = jwtGenerator;
         }
         public async Task<ErrorOr<AuthResult>> Handle(LoginCommand request,

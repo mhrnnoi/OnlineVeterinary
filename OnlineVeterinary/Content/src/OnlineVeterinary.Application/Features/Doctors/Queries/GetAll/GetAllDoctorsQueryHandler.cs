@@ -34,7 +34,7 @@ namespace OnlineVeterinary.Application.Features.Doctors.Queries.GetAll
             var doctors = users.Where(a => a.Role.ToLower() == "doctor");
             doctorsDTO = _mapper.Map<List<DoctorDTO>>(doctors);
             var expiryTime = DateTimeOffset.Now.AddSeconds(30);
-            _cacheService.SetData<List<DoctorDTO>>($"doctors", doctorsDTO, expiryTime);
+            _cacheService.SetData<List<DoctorDTO>>("doctors", doctorsDTO, expiryTime);
 
             return doctorsDTO;
         }

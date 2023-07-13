@@ -31,7 +31,6 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
                                         DeletePetByIdCommand request,
                                         CancellationToken cancellationToken)
         {
-            var pet = await _petRepository.GetByIdAsync(request.Id);
             var myGuidId = Guid.Parse(request.CareGiverId);
 
             var user = await _userRepository.GetByIdAsync(myGuidId);
@@ -39,6 +38,7 @@ namespace OnlineVeterinary.Application.Features.Pets.Commands.Delete
             {
                 return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
+            var pet = await _petRepository.GetByIdAsync(request.Id);
 
             if (pet is null || pet.CareGiverId != myGuidId)
             {
