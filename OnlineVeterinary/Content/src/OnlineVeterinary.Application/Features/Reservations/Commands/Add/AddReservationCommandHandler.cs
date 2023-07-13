@@ -49,8 +49,8 @@ namespace OnlineVeterinary.Application.Features.Reservations.Commands.Add
             Reservation reservation;
 
 
-            var user = await _userRepository.GetByIdAsync(myGuidId);
-            if (user is null)
+            var careGiver = await _userRepository.GetByIdAsync(myGuidId);
+            if (careGiver is null)
             {
                 return Error.NotFound(description : "you have invalid Id or this user is not exist any more");
             }
