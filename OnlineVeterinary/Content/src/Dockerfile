@@ -27,8 +27,6 @@ FROM base AS runtime
 WORKDIR /app
 
 COPY --from=publish /app/publish .
-RUN ls -l
-
 
 ENTRYPOINT [ "dotnet","OnlineVeterinary.Api.dll" ]
 
