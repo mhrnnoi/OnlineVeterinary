@@ -14,7 +14,7 @@ COPY ["./OnlineVeterinary.Api/OnlineVeterinary.Api.csproj", "src/OnlineVeterinar
 RUN dotnet restore "src/OnlineVeterinary.Api/OnlineVeterinary.Api.csproj"
 
 
-COPY . .
+COPY . ./
 
 WORKDIR "/src/OnlineVeterinary.Api/"
 RUN dotnet build -c Release -o /app/build
