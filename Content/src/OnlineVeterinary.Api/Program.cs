@@ -1,8 +1,10 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 using OnlineVeterinary.Api;
 using OnlineVeterinary.Application;
 using OnlineVeterinary.Infrastructure;
+using OnlineVeterinary.Infrastructure.Persistence.DataContext;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,9 +39,16 @@ var options = new RequestLocalizationOptions
     SupportedUICultures = supportedCultures
 };
 
+
 var app = builder.Build();
 {
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider
+            .GetRequiredService<AppDbContext>();
 
+        dbContext.Database.Migrate();
+    }
     app.UseRequestLocalization(options);
     app.UseSwagger();
     app.UseSwaggerUI();
