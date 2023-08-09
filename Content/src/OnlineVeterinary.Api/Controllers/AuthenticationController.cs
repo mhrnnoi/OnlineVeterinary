@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using OnlineVeterinary.Api.Filters;
 using OnlineVeterinary.Application.Features.Auth.Commands.ChangeEmail;
 using OnlineVeterinary.Application.Features.Auth.Commands.ChangePassword;
 using OnlineVeterinary.Application.Features.Auth.Commands.Delete;
@@ -41,6 +42,7 @@ namespace OnlineVeterinary.Api.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
+        [ServiceFilter(typeof(LoginActionFilterAttribute))]
         public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
         {
 

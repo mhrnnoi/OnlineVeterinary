@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using MapsterMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using OnlineVeterinary.Api.Filters;
 using OnlineVeterinary.Api.Identity;
 using OnlineVeterinary.Application.Features.Reservations.Commands.Add;
 using OnlineVeterinary.Application.Features.Reservations.Commands.DeleteById;
@@ -13,6 +13,7 @@ using OnlineVeterinary.Contracts.Reservations.Request;
 namespace OnlineVeterinary.Api.Controllers
 {
     [Route("api/[controller]/[action]")]
+    [ServiceFilter(typeof(ReservationFilterAttribute))]
     public class ReservationController : ApiController
     {
         private readonly IStringLocalizer<ReservationController> _localizer;
