@@ -19,10 +19,10 @@ namespace OnlineVeterinary.Api.Controllers
         private readonly IStringLocalizer<ReservationController> _localizer;
 
         private readonly IMapper _mapper;
-        private readonly IMediator _mediatR;
-        public ReservationController(IMediator mediatR, IMapper mapper, IStringLocalizer<ReservationController> localizer)
+        private readonly ISender _sender;
+        public ReservationController(ISender sender, IMapper mapper, IStringLocalizer<ReservationController> localizer)
         {
-            _mediatR = mediatR;
+            _sender = sender;
             _mapper = mapper;
             _localizer = localizer;
         }
@@ -30,12 +30,12 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpGet]
         [RequiresClaim(ClaimTypes.Role, "caregiver", "doctor")]
 
-        public async Task<IActionResult> GetMyAllReservationsAsync()
+        public async Task<IActionResult> GetMyAllReservationsAsync(CancellationToken cancellationToken)
         {
             var userId = GetUserId(User.Claims);
             var userRole = GetUserRole(User.Claims);
             var query = new GetAllReservationsQuery(userId, userRole);
-            var result = await _mediatR.Send(query);
+            var result = await _sender.Send(query, cancellationToken);
             return result.Match(result => Ok(result),
                                  errors => Problem(errors));
 
@@ -47,13 +47,13 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpPost]
         [RequiresClaim(ClaimTypes.Role, "caregiver")]
 
-        public async Task<IActionResult> AddReservationAsync([FromBody] AddReservationRequest request)
+        public async Task<IActionResult> AddReservationAsync([FromBody] AddReservationRequest request, CancellationToken cancellationToken)
         {
             var userId = GetUserId(User.Claims);
             var command = new AddReservationCommand(request.PetId,
                                                      request.DoctorId, userId);
 
-            var result = await _mediatR.Send(command);
+            var result = await _sender.Send(command, cancellationToken);
             return result.Match(result => Ok(result),
                                  errors => Problem(errors));
 
@@ -62,13 +62,13 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpDelete("{id}")]
         [RequiresClaim(ClaimTypes.Role, "caregiver", "doctor")]
 
-        public async Task<IActionResult> DeleteMyReservationByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteMyReservationByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var userId = GetUserId(User.Claims);
             var userRole = GetUserRole(User.Claims);
             var command = new DeleteReservationByIdCommand(id, userId, userRole);
 
-            var result = await _mediatR.Send(command);
+            var result = await _sender.Send(command, cancellationToken);
             return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
         }

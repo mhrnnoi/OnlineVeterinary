@@ -18,17 +18,17 @@ namespace OnlineVeterinary.Api.Controllers
     {
         private readonly IStringLocalizer<AnimalCareController> _localizer;
         private readonly IMapper _mapper;
-        private readonly IMediator _mediatR;
-        public AnimalCareController(IMediator mediatR, IMapper mapper, IStringLocalizer<AnimalCareController> localizer)
+        private readonly ISender _sender;
+        public AnimalCareController(ISender sender, IMapper mapper, IStringLocalizer<AnimalCareController> localizer)
         {
-            _mediatR = mediatR;
+            _sender = sender;
             _mapper = mapper;
             _localizer = localizer;
         }
 
         [HttpPost]
         [RequiresClaim(ClaimTypes.Role, "caregiver")]
-        public async Task<IActionResult> AddPetAsync(AddPetRequest request)
+        public async Task<IActionResult> AddPetAsync(AddPetRequest request, CancellationToken cancellationToken)
         {
             var petInfo = _mapper.Map<AddPetCommand>((request));
             var userId = GetUserId(User.Claims);
@@ -39,7 +39,7 @@ namespace OnlineVeterinary.Api.Controllers
                 CareGiverLastName = userFamilyName
             };
 
-            var result = await _mediatR.Send(command);
+            var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
@@ -51,11 +51,11 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpDelete("{id}")]
         [RequiresClaim(ClaimTypes.Role, "caregiver")]
 
-        public async Task<IActionResult> DeleteMyPetByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteMyPetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var userId = GetUserId(User.Claims);
             var command = new DeletePetByIdCommand(id, userId);
-            var result = await _mediatR.Send(command);
+            var result = await _sender.Send(command, cancellationToken);
             return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
 
@@ -65,10 +65,10 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpGet("{id}")]
         [RequiresClaim(ClaimTypes.Role, "caregiver")]
 
-        public async Task<IActionResult> GetDoctorByIdAsync(Guid id)
+        public async Task<IActionResult> GetDoctorByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var query = new GetDoctorByIdQuery(id);
-            var result = await _mediatR.Send(query);
+            var result = await _sender.Send(query, cancellationToken);
             return result.Match(result => Ok(result),
                                  errors => Problem(errors));
 
@@ -77,11 +77,11 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpGet]
         [RequiresClaim(ClaimTypes.Role, "caregiver")]
 
-        public async Task<IActionResult> GetMyPetsAsync()
+        public async Task<IActionResult> GetMyPetsAsync(CancellationToken cancellationToken)
         {
             var userId = GetUserId(User.Claims);
             var query = new GetMyPetsQuery(userId);
-            var result = await _mediatR.Send(query);
+            var result = await _sender.Send(query, cancellationToken);
             return result.Match(result => Ok(result),
                                  errors => Problem(errors));
 
@@ -91,10 +91,10 @@ namespace OnlineVeterinary.Api.Controllers
         [HttpGet]
         [RequiresClaim(ClaimTypes.Role, "caregiver")]
 
-        public async Task<IActionResult> GetAllDoctorsAsync()
+        public async Task<IActionResult> GetAllDoctorsAsync(CancellationToken cancellationToken)
         {
             var query = new GetAllDoctorsQuery();
-            var result = await _mediatR.Send(query);
+            var result = await _sender.Send(query, cancellationToken);
             return result.Match(result => Ok(result),
                                  errors => Problem(errors));
 

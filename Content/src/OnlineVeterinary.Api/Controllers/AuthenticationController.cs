@@ -18,21 +18,21 @@ namespace OnlineVeterinary.Api.Controllers
     {
         private readonly IStringLocalizer<AuthenticationController> _localizer;
         private readonly IMapper _mapper;
-        private readonly IMediator _mediatR;
-        public AuthenticationController(IMediator mediatR, IMapper mapper, IStringLocalizer<AuthenticationController> localizer)
+        private readonly ISender _sender;
+        public AuthenticationController(ISender sender, IMapper mapper, IStringLocalizer<AuthenticationController> localizer)
         {
-            _mediatR = mediatR;
+            _sender = sender;
             _mapper = mapper;
             _localizer = localizer;
         }
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request, CancellationToken cancellationToken)
         {
 
             var command = _mapper.Map<RegisterCommand>(request);
 
-            var result = await _mediatR.Send(command);
+            var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(result => Ok(result),
                                  errors => Problem(errors));
@@ -43,12 +43,12 @@ namespace OnlineVeterinary.Api.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ServiceFilter(typeof(LoginActionFilterAttribute))]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request, CancellationToken cancellationToken)
         {
 
             var command = _mapper.Map<LoginCommand>(request);
 
-            var result = await _mediatR.Send(command);
+            var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(result => Ok(result),
                                  errors => Problem(errors));
@@ -58,13 +58,13 @@ namespace OnlineVeterinary.Api.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteMyAccountAsync()
+        public async Task<IActionResult> DeleteMyAccountAsync(CancellationToken cancellationToken)
         {
             string userId = GetUserId(User.Claims);
 
             var command = new DeleteMyAccountCommand(userId);
-            var result = await _mediatR.Send(command);
-            
+            var result = await _sender.Send(command, cancellationToken);
+
             return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
 
@@ -73,17 +73,17 @@ namespace OnlineVeterinary.Api.Controllers
 
         }
 
-      
+
 
         [HttpPut]
-        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordRequest request)
+        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordRequest request, CancellationToken cancellationToken)
         {
             string userId = GetUserId(User.Claims);
 
-            var command = new ChangePasswordCommand( Id : userId,
-                                                     NewPassword : request.NewPassword);
+            var command = new ChangePasswordCommand(Id: userId,
+                                                     NewPassword: request.NewPassword);
 
-            var result = await _mediatR.Send(command);
+            var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
@@ -92,14 +92,14 @@ namespace OnlineVeterinary.Api.Controllers
 
         }
         [HttpPut]
-        public async Task<IActionResult> ChangeEmailAsync([FromBody] ChangeEmailRequest request)
+        public async Task<IActionResult> ChangeEmailAsync([FromBody] ChangeEmailRequest request, CancellationToken cancellationToken)
         {
             string userId = GetUserId(User.Claims);
 
             var command = new ChangeEmailCommand(request.NewEmail,
                                                  userId);
 
-            var result = await _mediatR.Send(command);
+            var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(result => Ok(_localizer[result]),
                                  errors => Problem(errors));
@@ -107,7 +107,7 @@ namespace OnlineVeterinary.Api.Controllers
 
 
         }
-        
+
 
 
 
